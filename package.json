@@ -4,7 +4,8 @@
   "description": "Licenta Ples Alexandru Nicusor",
   "main": "index.js",
   "scripts": {
-    "test": "dev"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
