@@ -1,0 +1,22 @@
+{
+  "name": "pokergame",
+  "version": "1.0.0",
+  "description": "Licenta Ples Alexandru Nicusor",
+  "main": "index.js",
+  "scripts": {
+    "test": "dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plesalex100/pokergame.git"
+  },
+  "author": "plesalex100",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plesalex100/pokergame/issues"
+  },
+  "homepage": "https://github.com/plesalex100/pokergame#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
