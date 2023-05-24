@@ -59,14 +59,14 @@ class Player {
         return {value: this.getHighestCardValue(hand), name: "Carte mare"};
     }
 
-    getHighestCardValue(hand) {
+    #getHighestCardValue(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
         return sortedHand[0].number;
     }
 
-    getStraight(hand) {
+    #getStraight(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
@@ -83,7 +83,7 @@ class Player {
         return straight;
     }
 
-    getFourOfAKind(hand) {
+    #getFourOfAKind(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
@@ -100,7 +100,7 @@ class Player {
         return fourOfAKind;
     }
 
-    getFullHouse(hand) {
+    #getFullHouse(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
@@ -123,7 +123,7 @@ class Player {
         return fullHouse;
     }
 
-    getThreeOfAKind(hand) {
+    #getThreeOfAKind(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
@@ -140,7 +140,7 @@ class Player {
         return threeOfAKind;
     }
 
-    getTwoPair(hand) {
+    #getTwoPair(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
@@ -162,7 +162,7 @@ class Player {
         })));
     }
 
-    getOnePair(hand) {
+    #getOnePair(hand) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
