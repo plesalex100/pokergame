@@ -120,6 +120,7 @@ router.post("/login", async (req, res) => {
 
 const { userAuth } = require("../middleware/auth");
 
+// status
 router.get("/", userAuth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id, null, {
@@ -141,6 +142,7 @@ router.get("/", userAuth, async (req, res) => {
     }
 });
 
+// log out
 router.delete("/", (req, res) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.redirect("/");

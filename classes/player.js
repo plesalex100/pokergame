@@ -10,6 +10,7 @@ class Player {
         return amount;
     }
 
+
     getHandValue(cardsOnTable) {
         return this.getHandValueAndName(cardsOnTable).value;
     }
@@ -177,6 +178,10 @@ class Player {
             lastCard = sortedHand[i];
         }
         return onePair;
+    }
+
+    destroy() {
+        // TODO: destroy player
     }
 }
 
