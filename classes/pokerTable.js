@@ -9,6 +9,7 @@ class PokerTable {
         this.players = [];
         this.deck = new Deck();
         this.cardsOnTable = [];
+        this.stage = 0;
     }
 
     addPlayer(user) {
@@ -28,7 +29,7 @@ class PokerTable {
     turn() {
         this.cardsOnTable.push(this.deck.deal(1)[0]);
     }
-    
+
     river() {
         this.cardsOnTable.push(this.deck.deal(1)[0]);
     }
