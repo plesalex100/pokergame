@@ -10,59 +10,48 @@ class Player {
         return amount;
     }
 
-    // get poker hand value
     getHandValue(cardsOnTable) {
         const hand = this.hand.concat(cardsOnTable);
         
-        // check for flush
         const flush = hand.filter(card => card.suit === hand[0].suit);
         if (flush.length >= 5) {
-            // check for straight flush
             const straightFlush = this.getStraight(flush);
             if (straightFlush.length >= 5) {
                 return 1000 + this.getHighestCardValue(straightFlush);
             }
-            // check for flush
             return 600 + this.getHighestCardValue(flush);
         }
 
-        // check for straight
         const straight = this.getStraight(hand);
         if (straight.length >= 5) {
             return 500 + this.getHighestCardValue(straight);
         }
 
-        // check for four of a kind
         const fourOfAKind = this.getFourOfAKind(hand);
         if (fourOfAKind.length >= 4) {
             return 400 + this.getHighestCardValue(fourOfAKind);
         }
 
-        // check for full house
         const fullHouse = this.getFullHouse(hand);
         if (fullHouse.length >= 5) {
             return 300 + this.getHighestCardValue(fullHouse);
         }
 
-        // check for three of a kind
         const threeOfAKind = this.getThreeOfAKind(hand);
         if (threeOfAKind.length >= 3) {
             return 200 + this.getHighestCardValue(threeOfAKind);
         }
 
-        // check for two pair
         const twoPair = this.getTwoPair(hand);
         if (twoPair.length >= 4) {
             return 100 + this.getHighestCardValue(twoPair);
         }
 
-        // check for one pair
         const onePair = this.getOnePair(hand);
         if (onePair.length >= 2) {
             return 50 + this.getHighestCardValue(onePair);
         }
 
-        // return high card
         return this.getHighestCardValue(hand);
     }
 
@@ -189,11 +178,13 @@ class Player {
 
 class Card {
     constructor(number, suit) {
-        this.label = number + ' of ' + suit;
-
+        this.label = number + ' de ' + suit;
+        
+        const suits = ['Inima Rosie', 'Inima Neagra', 'Trefla', 'Romb'];
         const numbers = ['2', '3', '4', '5', '6', '7', '8', '9', '10',
-                         'Jack', 'Queen', 'King', 'Ace'];
-
+        'J', 'Q', 'K', 'A'];
+        
+        this.img = `${number}_${suits.indexOf(suit) + 1}`;
         this.number = numbers.indexOf(number) + 2;
         this.suit = suit;
     }
@@ -208,9 +199,9 @@ class Deck {
 
     reset() {
         this.cards = [];
-        const suits = ['Hearts', 'Spades', 'Clubs', 'Diamonds'];
+        const suits = ['Inima Rosie', 'Inima Neagra', 'Trefla', 'Romb'];
         const numbers = ['2', '3', '4', '5', '6', '7', '8', '9', '10',
-                         'Jack', 'Queen', 'King', 'Ace'];
+                         'J', 'Q', 'K', 'A'];
         suits.forEach(suit => {
             numbers.forEach(number => {
                 this.cards.push(new Card(number, suit));
@@ -225,7 +216,8 @@ class Deck {
 
 class PokerTable {
 
-    constructor() {
+    constructor(id) {
+        this.id = id;
         this.players = [];
         this.deck = new Deck();
         this.cardsOnTable = [];
@@ -261,6 +253,14 @@ class PokerTable {
             }
         });
         return winner;
+    }
+
+    reset() {
+        this.players.forEach(player => {
+            player.hand = [];
+        });
+        this.deck.reset();
+        this.cardsOnTable = [];
     }
 
 }
