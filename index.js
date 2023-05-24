@@ -11,11 +11,20 @@ app.use(cookieParser());
 const connectDB = require('./db');
 connectDB();
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const { userAuthOptional } = require('./middleware/auth');
 
-app.use('/api', require('./routes'));
+app.get('/', userAuthOptional, (req, res) => {
+
+    if (!req.user) {
+        return res.send("TODO Login & Register page");
+    }
+
+    res.json(req.user);
+})
+
+app.use('/', require('./routes'));
+
+
 
 const server = app.listen(process.env.PORT || 3000, () => {
     console.log('Server is running on port 3000');

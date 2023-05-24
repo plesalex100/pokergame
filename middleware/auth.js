@@ -24,3 +24,18 @@ exports.userAuth = async (req, res, next) => {
     }
 
 }
+
+exports.userAuthOptional = async (req, res, next) => {
+    const token = req.cookies.jwt;
+    if (!token) {
+        return next();
+    }
+
+    try {
+        const decoded = await jwt.verify(token, jwtSecret);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return next();
+    }
+}

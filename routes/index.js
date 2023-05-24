@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/auth', require('./auth'));
+router.use('/api/auth', require('./auth'));
+router.use('/table', require('./table'));
 
 module.exports = router;
