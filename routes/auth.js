@@ -12,13 +12,42 @@ if (!process.env.secretHash) {
 }
 const jwtSecret = process.env.secretHash;
 
+router.get("/username", async (req, res) => {
+    const username = req.query.name;
+
+    if (!username) {
+        return res.status(400).json({
+            success: false
+        });
+    }
+
+    try {
+        const accountExists = await User.countDocuments({ username }, { limit: 1 }) > 0;
+        res.status(200).json({
+            success: true,
+            available: !accountExists
+        });
+    } catch (err) {
+        res.status(400).json({
+            success: false
+        });
+    }
+})
+
 router.post("/register", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, confirmPassword } = req.body;
 
     if (!username || !password) {
         return res.status(400).json({
             success: false,
             message: "Username and password required"
+        });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).json({
+            success: false,
+            message: "Passwords do not match"
         });
     }
 

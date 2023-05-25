@@ -11,17 +11,6 @@ app.use(cookieParser());
 const connectDB = require('./db');
 connectDB();
 
-const { userAuthOptional } = require('./middleware/auth');
-
-app.get('/', userAuthOptional, (req, res) => {
-
-    if (!req.user) {
-        return res.send("TODO Login & Register page");
-    }
-
-    res.json(req.user);
-})
-
 app.use('/', require('./routes'));
 
 
