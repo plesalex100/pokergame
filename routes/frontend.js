@@ -4,7 +4,7 @@ const { userAuthOptional } = require('../middleware/auth');
 const path = require('path');
 
 const sendFrontendPage = (res, page) => {
-    res.cookie("currentPage", page, { expires: new Date(Date.now() + 86400) });
+    res.cookie("currentPage", page, { maxAge: 86400 });
     res.sendFile(path.resolve(`public/${page}/index.html`));
 }
 
@@ -26,17 +26,22 @@ router.get('/login', userAuthOptional, (req, res) => {
     sendFrontendPage(res, "login");
 });
 
-router.get('/:filepath', (req, res) => {
+router.get('/:filename', (req, res) => {
     if (!req.cookies.currentPage) {
         return res.redirect('/');
     }
-    const filePath = req.params.filepath;
-    res.sendFile(path.resolve(`public/${req.cookies.currentPage}/${filePath}`));
+    const fileName = req.params.filename;
+    res.sendFile(path.resolve(`public/${req.cookies.currentPage}/${fileName}`));
 });
 
-router.get('/global/:filepath', (req, res) => {    
-    const filePath = req.params.filepath;
-    res.sendFile(path.resolve(`public/${filePath}`));
+router.get('/global/:filename', (req, res) => {    
+    const fileName = req.params.filename;
+    res.sendFile(path.resolve(`public/${fileName}`));
+});
+
+router.get('/global/:subfolder/:filename', (req, res) => {
+    const { subfolder, filename } = req.params;
+    res.sendFile(path.resolve(`public/${subfolder}/${filename}`));
 });
 
 module.exports = router;

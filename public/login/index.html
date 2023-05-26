@@ -4,6 +4,7 @@
     <title>Poker Game - Login</title>
     <script src="global/main.js" type="text/javascript" defer></script>
     <script src="script.js" type="text/javascript" defer></script>
+    <link rel="stylesheet" href="global/main.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,35 +18,34 @@
                 <h1>Login</h1>
             </div>
 
-            <div class="login-form">
-                <form method="post" action="/api/login">
+            <div class="login-form" data-api="/api/auth/login">
+
+                <div class="login-input">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" onfocusout="usernameFocusOut(this.value);" required>
+                </div>
+
+                <div class="login-input">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+
+                <!-- Register input apare doar in monetul in care username-ul este nou -->
+                <div class="register-input hidden">
                     <div class="login-input">
-                        <label for="username">Username</label>
-                        <input type="text" name="username" id="username" placeholder="Username" required>
-                    </div>
-
-                    <div class="login-input">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" id="password" placeholder="Password" required>
-                    </div>
-
-                    <!-- Register input apare doar in monetul in care username-ul este nou -->
-                    <div class="register-input" style="display: none;">
-                        <div class="login-input">
-                            <label for="confirm-password">Confirm Password</label>
-                            <input type="password" name="confirmPassword" id="confirm-password" placeholder="Confirm Password" required>
-                        </div>
-
-                        <div class="login-input">
-                            <label for="email">Confirm Password</label>
-                            <input type="email" name="email" id="email" placeholder="Email" required>
-                        </div>
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" name="confirmPassword" id="confirm-password">
                     </div>
 
                     <div class="login-input">
-                        <input type="submit" value="Login">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email">
                     </div>
-                </form>
+                </div>
+
+                <div class="login-input">
+                    <input type="submit" value="Login" onclick="submitForm()">
+                </div>
             </div>
         </div>
     </div>

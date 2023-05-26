@@ -35,36 +35,36 @@ router.get("/username", async (req, res) => {
 })
 
 router.post("/register", async (req, res) => {
-    const { username, password, confirmPassword } = req.body;
+    const { username, password, confirmPassword, email } = req.body;
 
-    if (!username || !password) {
+    if (!username || !password || !confirmPassword || !email) {
         return res.status(400).json({
             success: false,
-            message: "Username and password required"
+            message: "Completeaza toate campurile"
         });
     }
 
     if (password !== confirmPassword) {
         return res.status(400).json({
             success: false,
-            message: "Passwords do not match"
+            message: "Parolele nu se potrivesc"
         });
     }
 
     if (password.length < 4) {
         return res.status(400).json({
             success: false,
-            message: `Password less than 4 characters`
+            message: "Parola trebuie sa aiba minim 4 caractere"
         });
     }
     const hashedPass = await bcrypt.hash(password, 10);
     try {
 
-        const alreadyExistUser = await User.countDocuments({ username }, { limit: 1 }) > 0;
+        const alreadyExistUser = await User.countDocuments({ or: [ {username}, {email} ] }, { limit: 1 }) > 0;
         if (alreadyExistUser) {
             return res.status(400).json({
                 success: false,
-                message: "User already exists",
+                message: "Utilizatorul exista deja (email sau username)",
             });
         }
 
@@ -86,19 +86,19 @@ router.post("/register", async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "User successfully created",
+            message: "Ai creeat cu succes un cont nou",
             user,
         });
     } catch (err) {
         res.status(401).json({
             success: false,
-            message: "User not successful created",
-            error: err.mesage,
+            message: `Eroare: ${err.mesage}`
         })
     }
 })
 
 router.post("/login", async (req, res) => {
+
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -108,19 +108,20 @@ router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({ username });
 
+        // Teoretic daca utilizatorul ar folosii in parametrii normali aplicatia, nu are cum sa ajunga aici
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Utilizator inexistent"
+            })
+        }
+
         const passCheck = await bcrypt.compare(password, user.password);
 
         if (!passCheck) {
             return res.status(401).json({
-                message: "Login not successful",
-                error: "Password does not match",
-            })
-        }
-
-        if (!user) {
-            return res.status(401).json({
-                message: "Login not successful",
-                error: "User not found",
+                success: false,
+                message: "Parolă incorecta",
             })
         }
 
@@ -136,13 +137,14 @@ router.post("/login", async (req, res) => {
         });
 
         res.status(200).json({
+            success: true,
             message: "Login successful",
-            user,
+            user
         })
     } catch (error) {
         res.status(400).json({
-            message: "An error occurred",
-            error: error.message,
+            success: false,
+            message: `Eroare: ${error.message}`
         })
     }
 })

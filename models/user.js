@@ -10,6 +10,11 @@ const UserSchema = new Mongoose.Schema({
     minlength: 4,
     required: true,
   },
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
   coins: {
     type: Number,
     default: 5000,
