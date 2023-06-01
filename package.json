@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.2.0",
     "mongose": "^0.0.2-security",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "ws": "^8.13.0"
   }
 }

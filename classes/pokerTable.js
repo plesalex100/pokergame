@@ -4,8 +4,9 @@ const Deck = require('./deck');
 
 class PokerTable {
 
-    constructor(id) {
+    constructor(id, name) {
         this.id = id;
+        this.name = name;
         this.players = [];
         this.deck = new Deck();
         this.cardsOnTable = [];

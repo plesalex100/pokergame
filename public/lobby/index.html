@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
 <head>
-    <title>Poker Game</title>
-    <script src="../main.js" type="text/javascript" defer></script>
+    <title>Poker Game - Table Selector</title>
+    <script src="global/main.js" type="text/javascript" defer></script>
     <script src="script.js" type="text/javascript" defer></script>
     <link rel="stylesheet" href="global/main.css">
     <link rel="stylesheet" href="style.css">
@@ -10,6 +10,31 @@
 
 <body>
 
-    test main game
+    <div class="container">
+
+        <div class="lobby-container">
+            <div class="create-table-container">
+                <input type="text" id="create-table-name" placeholder="Nume masa"/>
+                <input type="button" value="Creeaza Masa"/>
+            </div>
+            <div id="table-list-container" class="loading">
+                
+                <div class="list-header">
+                    <h1>Mese disponibile</h1>
+                    <input type="button" value="Refresh" onclick="refreshTables()"/>
+                </div>
+
+                <div id="table-list">
+                    <div class="table-item" data-table-id="abc">
+                        <span>Nume Masa</span>
+                        <span>Numar Jucatori</span>
+                        <input type="button" value="Join" onclick="joinTable(this)"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 
 </body>

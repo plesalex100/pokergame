@@ -1,3 +1,5 @@
+
+// current path: /
 const router = require("express").Router();
 
 const { userAuthOptional } = require('../middleware/auth');

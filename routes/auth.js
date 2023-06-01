@@ -1,4 +1,6 @@
 const User = require("../models/user");
+
+// current path: /api/auth
 const router = require("express").Router();
 
 const bcrypt = require("bcryptjs");
@@ -70,7 +72,8 @@ router.post("/register", async (req, res) => {
 
         const user = await User.create({
             username,
-            password: hashedPass
+            password: hashedPass,
+            email
         });
 
         const maxAge = 3 * 60 * 60;
@@ -92,7 +95,7 @@ router.post("/register", async (req, res) => {
     } catch (err) {
         res.status(401).json({
             success: false,
-            message: `Eroare: ${err.mesage}`
+            message: `Eroare: ${err._message}`
         })
     }
 })
@@ -140,11 +143,11 @@ router.post("/login", async (req, res) => {
             success: true,
             message: "Login successful",
             user
-        })
+        });
     } catch (error) {
         res.status(400).json({
             success: false,
-            message: `Eroare: ${error.message}`
+            message: `Eroare: ${error._message}`
         })
     }
 })

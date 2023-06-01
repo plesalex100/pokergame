@@ -1,10 +1,11 @@
 
-// Make a router instance
 const express = require('express');
+
+// current path: /
 const router = express.Router();
 
 router.use('/api/auth', require('./auth'));
-router.use('/table', require('./table'));
+router.use('/api/table', require('./table'));
 
 router.use('/', require('./frontend'));
 

@@ -1,6 +1,7 @@
 
 const loginForm = document.querySelector(".login-form");
 const registerInput = loginForm.querySelector(".register-input");
+const submitButton = loginForm.querySelector(".login-input > input[type='submit']");
 
 const usernameFocusOut = async (name) => {
     
@@ -20,8 +21,10 @@ const usernameFocusOut = async (name) => {
 
         if (available) {
             loginForm.dataset.api = "/api/auth/register";
+            submitButton.value = "Register";
         } else {
             loginForm.dataset.api = "/api/auth/login";
+            submitButton.value = "Login";
         }
     }
 }
@@ -30,7 +33,7 @@ const submitForm = async () => {
 
     const username = loginForm.querySelector("#username");
     const password = loginForm.querySelector("#password");
-    const confirmPassword = loginForm.querySelector("#confirmPassword");
+    const confirmPassword = loginForm.querySelector("#confirm-password");
     const email = loginForm.querySelector("#email");
 
     const apiAction = loginForm.dataset.api;
