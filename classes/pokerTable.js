@@ -13,6 +13,8 @@ class PokerTable {
         this.stage = 0;
     }
 
+
+
     addPlayer(user) {
         this.players.push(new Player(user));
     }
@@ -51,6 +53,10 @@ class PokerTable {
         });
         this.deck.reset();
         this.cardsOnTable = [];
+    }
+
+    getTotalPlayers() {
+        return this.players.length;
     }
 }
 

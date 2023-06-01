@@ -16,7 +16,8 @@ router.get("/", userAuth, async (req, res) => {
     pokerTables.forEach((table, tableId) => {
         pokerTablesAvailable.push({
             id: tableId,
-            name: table.name
+            name: table.name,
+            players: table.getTotalPlayers()
         });
     });
 
@@ -45,7 +46,6 @@ router.get("/:tableId", userAuth, async (req, res) => {
 
         const table = pokerTables.get(tableId);
 
-
         res.send("Table ID: " + tableId);
 
     } catch (err) {
@@ -66,7 +66,7 @@ router.post("/create", userAuth, async (req, res) => {
             message: "Name required"
         });
     }
-    
+
     const randomId = await new Promise((resolve) => {
         let genId;
         do {
