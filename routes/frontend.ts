@@ -1,16 +1,18 @@
 
 // current path: /
-const router = require("express").Router();
+import { Router, Request, Response } from 'express';
+const router = Router();
 
-const { userAuthOptional } = require('../middleware/auth');
-const path = require('path');
+import { userAuthOptional, RequestWithUser } from '../middleware/auth';
 
-const sendFrontendPage = (res, page) => {
+import path from 'path';
+
+const sendFrontendPage = (res: Response, page: string) => {
     res.cookie("currentPage", page, { maxAge: 86400 });
     res.sendFile(path.resolve(`public/${page}/index.html`));
 }
 
-router.get('/', userAuthOptional, (req, res) => {
+router.get('/', userAuthOptional, (req: RequestWithUser, res: Response) => {
 
     if (!req.user) {
         return res.redirect('/login');
@@ -19,7 +21,7 @@ router.get('/', userAuthOptional, (req, res) => {
     sendFrontendPage(res, "lobby");
 });
 
-router.get('/login', userAuthOptional, (req, res) => {
+router.get('/login', userAuthOptional, (req: RequestWithUser, res: Response) => {
 
     if (req.user) {
         return res.redirect('/');
@@ -28,7 +30,7 @@ router.get('/login', userAuthOptional, (req, res) => {
     sendFrontendPage(res, "login");
 });
 
-router.get('/:filename', (req, res) => {
+router.get('/:filename', (req: Request, res: Response) => {
     if (!req.cookies.currentPage) {
         return res.redirect('/');
     }
@@ -36,14 +38,14 @@ router.get('/:filename', (req, res) => {
     res.sendFile(path.resolve(`public/${req.cookies.currentPage}/${fileName}`));
 });
 
-router.get('/global/:filename', (req, res) => {    
+router.get('/global/:filename', (req: Request, res: Response) => {    
     const fileName = req.params.filename;
     res.sendFile(path.resolve(`public/${fileName}`));
 });
 
-router.get('/global/:subfolder/:filename', (req, res) => {
+router.get('/global/:subfolder/:filename', (req: Request, res: Response) => {
     const { subfolder, filename } = req.params;
     res.sendFile(path.resolve(`public/${subfolder}/${filename}`));
 });
 
-module.exports = router;
+export default router;

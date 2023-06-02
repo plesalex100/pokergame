@@ -1,4 +1,4 @@
-const Mongoose = require("mongoose");
+import Mongoose from "mongoose";
 
 const connectDB = async () => {
 
@@ -10,11 +10,10 @@ const connectDB = async () => {
     }
 
     const { connection } = await Mongoose.connect(process.env.mongouri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         dbName: process.env.mongodatabase,
     });
+
     console.log(`MongoDB Connected to Database ${connection.db.databaseName}`);
 }
 
-module.exports = connectDB;
+export default connectDB;

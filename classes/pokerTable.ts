@@ -1,10 +1,18 @@
+import Player, { User } from './player';
+import Deck from './deck';
+import Card from './card';
 
-const Player = require('./player');
-const Deck = require('./deck');
 
 class PokerTable {
+    
+    id: string;
+    name: string;
+    players: Player[];
+    deck: Deck;
+    cardsOnTable: Card[];
+    stage: number;
 
-    constructor(id, name) {
+    constructor(id: string, name: string) {
         this.id = id;
         this.name = name;
         this.players = [];
@@ -13,9 +21,7 @@ class PokerTable {
         this.stage = 0;
     }
 
-
-
-    addPlayer(user) {
+    addPlayer(user: User) {
         this.players.push(new Player(user));
     }
 
@@ -60,4 +66,4 @@ class PokerTable {
     }
 }
 
-module.exports = PokerTable;
+export default PokerTable;

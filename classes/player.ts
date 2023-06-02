@@ -1,21 +1,31 @@
+import Card from "./card";
+
+interface User {
+    username: string;
+    coins?: number;
+}
+
 class Player {
-    consturctor(user) {
+    username: string;
+    coins: number;
+    hand: Card[];
+
+    constructor(user: User) {
         this.username = user.username;
-        this.coins = user.coins;
+        this.coins = user.coins || 0;
         this.hand = [];
     }
 
-    bet(amount) {
+    bet(amount: number) : number {
         this.coins -= amount;
         return amount;
     }
 
-
-    getHandValue(cardsOnTable) {
+    getHandValue(cardsOnTable: Card[]) : number {
         return this.getHandValueAndName(cardsOnTable).value;
     }
 
-    getHandValueAndName(cardsOnTable) {
+    getHandValueAndName(cardsOnTable: Card[]) {
         const hand = this.hand.concat(cardsOnTable);
         
         const flush = hand.filter(card => card.suit === hand[0].suit);
@@ -60,19 +70,19 @@ class Player {
         return {value: this.getHighestCardValue(hand), name: "Carte mare"};
     }
 
-    #getHighestCardValue(hand) {
+    private getHighestCardValue(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
         return sortedHand[0].number;
     }
 
-    #getStraight(hand) {
+    private getStraight(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let straight = [];
-        let lastCard = sortedHand[0];
+        let straight: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number - sortedHand[i].number === 1) {
                 straight.push(sortedHand[i]);
@@ -84,12 +94,12 @@ class Player {
         return straight;
     }
 
-    #getFourOfAKind(hand) {
+    private getFourOfAKind(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let fourOfAKind = [];
-        let lastCard = sortedHand[0];
+        let fourOfAKind: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number === sortedHand[i].number) {
                 fourOfAKind.push(sortedHand[i]);
@@ -101,12 +111,12 @@ class Player {
         return fourOfAKind;
     }
 
-    #getFullHouse(hand) {
+    private getFullHouse(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let threeOfAKind = [];
-        let lastCard = sortedHand[0];
+        let threeOfAKind: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number === sortedHand[i].number) {
                 threeOfAKind.push(sortedHand[i]);
@@ -124,12 +134,12 @@ class Player {
         return fullHouse;
     }
 
-    #getThreeOfAKind(hand) {
+    private getThreeOfAKind(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let threeOfAKind = [];
-        let lastCard = sortedHand[0];
+        let threeOfAKind: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number === sortedHand[i].number) {
                 threeOfAKind.push(sortedHand[i]);
@@ -141,12 +151,12 @@ class Player {
         return threeOfAKind;
     }
 
-    #getTwoPair(hand) {
+    private getTwoPair(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let twoPair = [];
-        let lastCard = sortedHand[0];
+        let twoPair: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number === sortedHand[i].number) {
                 twoPair.push(sortedHand[i]);
@@ -163,12 +173,12 @@ class Player {
         })));
     }
 
-    #getOnePair(hand) {
+    private getOnePair(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        let onePair = [];
-        let lastCard = sortedHand[0];
+        let onePair: Card[] = [];
+        let lastCard: Card = sortedHand[0];
         for (let i = 1; i < sortedHand.length; i++) {
             if (lastCard.number === sortedHand[i].number) {
                 onePair.push(sortedHand[i]);
@@ -185,4 +195,5 @@ class Player {
     }
 }
 
-module.exports = Player;
+export default Player;
+export { User };

@@ -57,4 +57,9 @@ const submitForm = async () => {
     });
 
     notify(message, success ? "success" : "error");
+    if (success) {
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1500);
+    }
 }

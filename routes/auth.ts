@@ -1,10 +1,11 @@
-const User = require("../models/user");
+import User from "../models/user";
 
 // current path: /api/auth
-const router = require("express").Router();
+import { Router, Request, Response } from "express";
+const router = Router();
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import { hash, compare } from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // node
 // require("crypto").randomBytes(35).toString("hex")
@@ -14,7 +15,7 @@ if (!process.env.secretHash) {
 }
 const jwtSecret = process.env.secretHash;
 
-router.get("/username", async (req, res) => {
+router.get("/username", async (req: Request, res: Response) => {
     const username = req.query.name;
 
     if (!username) {
@@ -36,7 +37,7 @@ router.get("/username", async (req, res) => {
     }
 })
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
     const { username, password, confirmPassword, email } = req.body;
 
     if (!username || !password || !confirmPassword || !email) {
@@ -59,7 +60,7 @@ router.post("/register", async (req, res) => {
             message: "Parola trebuie sa aiba minim 4 caractere"
         });
     }
-    const hashedPass = await bcrypt.hash(password, 10);
+    const hashedPass = await hash(password, 10);
     try {
 
         const alreadyExistUser = await User.countDocuments({ or: [ {username}, {email} ] }, { limit: 1 }) > 0;
@@ -92,7 +93,7 @@ router.post("/register", async (req, res) => {
             message: "Ai creeat cu succes un cont nou",
             user,
         });
-    } catch (err) {
+    } catch (err: any) {
         res.status(401).json({
             success: false,
             message: `Eroare: ${err._message}`
@@ -100,7 +101,7 @@ router.post("/register", async (req, res) => {
     }
 })
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
 
     const { username, password } = req.body;
 
@@ -119,7 +120,7 @@ router.post("/login", async (req, res) => {
             })
         }
 
-        const passCheck = await bcrypt.compare(password, user.password);
+        const passCheck = await compare(password, user.password);
 
         if (!passCheck) {
             return res.status(401).json({
@@ -144,7 +145,7 @@ router.post("/login", async (req, res) => {
             message: "Login successful",
             user
         });
-    } catch (error) {
+    } catch (error: any) {
         res.status(400).json({
             success: false,
             message: `Eroare: ${error._message}`
@@ -152,12 +153,12 @@ router.post("/login", async (req, res) => {
     }
 })
 
-const { userAuth } = require("../middleware/auth");
+import { userAuth, RequestWithUser } from "../middleware/auth";
 
 // status
-router.get("/", userAuth, async (req, res) => {
+router.get("/", userAuth, async (req: RequestWithUser, res: Response) => {
     try {
-        const user = await User.findById(req.user.id, null, {
+        const user = await User.findById(req.user?.id, null, {
             projection: {
                 username: 1,
                 coins: 1
@@ -167,7 +168,7 @@ router.get("/", userAuth, async (req, res) => {
             success: true,
             user,
         })
-    } catch (error) {
+    } catch (error: any) {
         res.status(400).json({
             success: false,
             message: "An error occurred",
@@ -177,9 +178,9 @@ router.get("/", userAuth, async (req, res) => {
 });
 
 // log out
-router.delete("/", (req, res) => {
+router.delete("/", (_req: Request, res: Response) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.redirect("/");
 });
 
-module.exports = router;
+export default router;

@@ -1,24 +1,26 @@
-require('dotenv').config();
-const express = require('express');
+import { config as configDotenv } from 'dotenv';
+configDotenv();
 
+import express from 'express';
 
 const app = express();
 app.use(express.json());
 
-const cookieParser = require("cookie-parser");
+import cookieParser from 'cookie-parser';
 app.use(cookieParser());
 
 // Connect to MongoDB
-const connectDB = require('./db');
+import connectDB from './db';
 connectDB();
 
-app.use('/', require('./routes'));
+import routes from './routes';
+app.use('/', routes);
 
 const server = app.listen(process.env.PORT || 3000, () => {
     console.log('Server is running on port 3000');
 });
 
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", (err: Error) => {
     console.log(`An error occurred: ${err.message}`);
     server.close(() => process.exit(1));
 });

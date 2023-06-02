@@ -1,17 +1,24 @@
 
 // current path: /api/table
-const router = require("express").Router();
-const crypto = require("crypto");
+import { Router, Request, Response } from "express";
+const router = Router();
 
-const { userAuth } = require("../middleware/auth");
-const PokerTable = require("../classes/pokerTable");
+import { randomBytes } from "crypto";
+import { userAuth, RequestWithUser } from "../middleware/auth";
+import PokerTable from "../classes/pokerTable";
 
-let pokerTables = new Map([
+let pokerTables = new Map<string, PokerTable>([
     ["abc", new PokerTable("abc", "Test Table")]
 ]);
 
-router.get("/", userAuth, async (req, res) => {
-    let pokerTablesAvailable = [];
+interface clientPokerTable {
+    id: string,
+    name: string,
+    players: number
+}
+
+router.get("/", userAuth, async (_req: RequestWithUser, res: Response) => {
+    let pokerTablesAvailable: clientPokerTable[] = [];
 
     pokerTables.forEach((table, tableId) => {
         pokerTablesAvailable.push({
@@ -24,7 +31,7 @@ router.get("/", userAuth, async (req, res) => {
     res.status(200).json(pokerTablesAvailable);
 });
 
-router.get("/:tableId", userAuth, async (req, res) => {
+router.get("/:tableId", userAuth, async (req: RequestWithUser, res: Response) => {
 
     const { tableId } = req.params;
 
@@ -48,7 +55,7 @@ router.get("/:tableId", userAuth, async (req, res) => {
 
         res.send("Table ID: " + tableId);
 
-    } catch (err) {
+    } catch (err: any) {
         res.status(400).json({
             message: "An error occurred",
             error: err.message,
@@ -56,7 +63,7 @@ router.get("/:tableId", userAuth, async (req, res) => {
     }
 });
 
-router.post("/create", userAuth, async (req, res) => {
+router.post("/create", userAuth, async (req: RequestWithUser, res: Response) => {
 
     const { name } = req.body;
     
@@ -67,10 +74,10 @@ router.post("/create", userAuth, async (req, res) => {
         });
     }
 
-    const randomId = await new Promise((resolve) => {
+    const randomId: string = await new Promise((resolve) => {
         let genId;
         do {
-            genId = crypto.randomBytes(6).toString("hex");
+            genId = randomBytes(6).toString("hex");
         } while (pokerTables.has(genId));
         resolve(genId);
     });
@@ -85,4 +92,4 @@ router.post("/create", userAuth, async (req, res) => {
     res.redirect("/table/" + randomId);
 });
 
-module.exports = router;
+export default router;
