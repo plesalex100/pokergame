@@ -2,10 +2,10 @@
 
 <head>
     <title>Poker Game - Table Selector</title>
-    <script src="global/main.js" type="text/javascript" defer></script>
-    <script src="script.js" type="text/javascript" defer></script>
-    <link rel="stylesheet" href="global/main.css">
-    <link rel="stylesheet" href="style.css">
+    <script src="/global/main.js" type="text/javascript" defer></script>
+    <script src="/script.js" type="text/javascript" defer></script>
+    <link rel="stylesheet" href="/global/main.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
@@ -15,7 +15,7 @@
         <div class="lobby-container">
             <div class="create-table-container">
                 <input type="text" id="create-table-name" placeholder="Nume masa"/>
-                <input type="button" value="Creeaza Masa"/>
+                <input type="button" value="Creeaza Masa" onclick="tryCreateTable()"/>
             </div>
             <div id="table-list-container" class="loading">
                 <div class="list-header">

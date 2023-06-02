@@ -14,6 +14,10 @@ ws.onerror = (err) => {
 }
 
 async function fetchAPI(path, options = {}) {
+
+    options.headers = options.headers || {};
+    options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/json';
+
     const response = await fetch(path, options);
     const json = await response.json();
     return json;

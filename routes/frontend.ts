@@ -13,21 +13,28 @@ const sendFrontendPage = (res: Response, page: string) => {
 }
 
 router.get('/', userAuthOptional, (req: RequestWithUser, res: Response) => {
-
     if (!req.user) {
         return res.redirect('/login');
     }
-    
     sendFrontendPage(res, "lobby");
 });
 
 router.get('/login', userAuthOptional, (req: RequestWithUser, res: Response) => {
-
     if (req.user) {
         return res.redirect('/');
     }
-
     sendFrontendPage(res, "login");
+});
+
+router.get('/table/:tableId', userAuthOptional, (req: RequestWithUser, res: Response) => {
+    if (!req.user) {
+        return res.redirect('/');
+    }
+    sendFrontendPage(res, "table");
+});
+
+router.get('/table', (_req: Request, res: Response) => {
+    res.redirect('/'); 
 });
 
 router.get('/logout', (_req: Request, res: Response) => {

@@ -70,7 +70,7 @@ router.post("/create", userAuth, async (req: RequestWithUser, res: Response) => 
     if (!name) {
         return res.status(400).json({
             success: false,
-            message: "Name required"
+            message: "Introdu un nume pentru masa de poker"
         });
     }
 
@@ -83,13 +83,15 @@ router.post("/create", userAuth, async (req: RequestWithUser, res: Response) => 
     });
 
     
-    
     const table = new PokerTable(randomId, name);
     pokerTables.set(randomId, table);
 
     console.log(`New poker table created {id: ${randomId}, name: ${name}}`);
     
-    res.redirect("/table/" + randomId);
+    res.status(200).json({
+        success: true,
+        message: `/table/${table.id}`
+    })
 });
 
 export default router;
