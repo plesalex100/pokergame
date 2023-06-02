@@ -7,6 +7,8 @@ import { randomBytes } from "crypto";
 import { userAuth, RequestWithUser } from "../middleware/auth";
 import PokerTable from "../classes/pokerTable";
 
+import User from "../models/user";
+
 let pokerTables = new Map<string, PokerTable>([
     ["abc", new PokerTable("abc", "Test Table")]
 ]);
@@ -31,9 +33,10 @@ router.get("/", userAuth, async (_req: RequestWithUser, res: Response) => {
     res.status(200).json(pokerTablesAvailable);
 });
 
-router.get("/:tableId", userAuth, async (req: RequestWithUser, res: Response) => {
+router.get("/:tableId/join", userAuth, async (req: RequestWithUser, res: Response) => {
 
     const { tableId } = req.params;
+    const { spectate, seatId } = req.body;
 
     if (!tableId) {
         return res.status(400).json({
@@ -53,7 +56,33 @@ router.get("/:tableId", userAuth, async (req: RequestWithUser, res: Response) =>
 
         const table = pokerTables.get(tableId);
 
-        res.send("Table ID: " + tableId);
+        if (!spectate) {
+            const dbUser = await User.findOne({username: req.user?.username}, {coins: 1});
+
+            if (!dbUser) {
+                return res.status(400).json({
+                    success: false,
+                    message: "User not found"
+                });
+            }
+
+            const success = table?.addPlayer({
+                username: req.user?.username as string,
+                coins: dbUser.coins
+            }, seatId);
+
+            if (!success) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Seat already taken"
+                });
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            user: req.user
+        });
 
     } catch (err: any) {
         res.status(400).json({

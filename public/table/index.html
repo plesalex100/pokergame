@@ -3,6 +3,7 @@
 <head>
     <title>Poker Game</title>
     <script src="/global/main.js" type="text/javascript" defer></script>
+    <script src="/global/websocket.js" type="text/javascript" defer></script>
     <script src="/script.js" type="text/javascript" defer></script>
     <link rel="stylesheet" href="/global/main.css">
     <link rel="stylesheet" href="/style.css">
@@ -11,8 +12,12 @@
 <body>
     <div class="container">
 
-        <div class="user-input">
+        <div class="user-input" style="display: none;">
+            <input type="button" value="Check" />
+            <input type="button" value="Fold" />
             <input type="button" value="Bet" />
+            <input type="button" value="Call" />
+            <input type="button" value="Raise" />
         </div>
 
         <div class="poker-table">

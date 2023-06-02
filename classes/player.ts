@@ -1,4 +1,6 @@
 import Card from "./card";
+import { Types as MongooseTypes } from "mongoose";
+import User from "../models/user";
 
 interface User {
     username: string;
@@ -9,11 +11,23 @@ class Player {
     username: string;
     coins: number;
     hand: Card[];
+    ready: boolean;
+    seatId: number;
 
-    constructor(user: User) {
+    mongoId: MongooseTypes.ObjectId | undefined;
+
+    constructor(user: User, seatId: number) {
         this.username = user.username;
         this.coins = user.coins || 0;
         this.hand = [];
+
+        this.ready = false;
+
+        User.findOne({username: this.username}, {_id: 1}).then((user) => {
+            this.mongoId = user?._id;
+        });
+
+        this.seatId = seatId;
     }
 
     bet(amount: number) : number {

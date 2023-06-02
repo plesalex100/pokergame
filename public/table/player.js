@@ -1,17 +1,22 @@
-const Card = require('./card');
+import Card from '/card';
 
 class Player {
 
-    constructor(user, isClient = false, seatPosition) {
+    username = false;
+    coins = 0;
+    hand = false;
+    isClient = false;
+
+    constructor() { }
+    _constructor(user, isClient = false) {
         this.username = user.username;
         this.coins = user.coins || 0;
-        
+
         this.hand = user.hand ? user.hand.map(card => {
             return new Card(card.number, card.suit);
         }) : false;
 
         this.isClient = isClient;
-        this.seatPosition = seatPosition;
     }
 
     getHandValue(cardsOnTable) {
@@ -183,9 +188,12 @@ class Player {
         return onePair;
     }
 
-    destroy() {
-        // TODO: destroy player
+    leaveSeat() {
+        this.username = false;
+        this.coins = 0;
+        this.hand = false;
+        this.isClient = false;
     }
 }
 
-module.exports = Player;
+export default Player;

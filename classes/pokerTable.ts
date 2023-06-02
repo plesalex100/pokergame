@@ -11,6 +11,7 @@ class PokerTable {
     deck: Deck;
     cardsOnTable: Card[];
     stage: number;
+    seats: boolean[];
 
     constructor(id: string, name: string) {
         this.id = id;
@@ -19,10 +20,17 @@ class PokerTable {
         this.deck = new Deck();
         this.cardsOnTable = [];
         this.stage = 0;
+        this.seats = new Array(6).fill(false);
     }
 
-    addPlayer(user: User) {
-        this.players.push(new Player(user));
+    addPlayer(user: User, seatId: number) {
+        if (this.seats[seatId]) {
+            return false;
+        }
+        this.seats[seatId] = true;
+        this.players.push(new Player(user, seatId));
+
+        return true;
     }
 
     dealCards() {
