@@ -178,7 +178,7 @@ router.get("/", userAuth, async (req: RequestWithUser, res: Response) => {
 });
 
 // log out
-router.delete("/", (_req: Request, res: Response) => {
+router.get("/logout", (_req: Request, res: Response) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.redirect("/");
 });

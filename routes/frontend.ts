@@ -30,6 +30,10 @@ router.get('/login', userAuthOptional, (req: RequestWithUser, res: Response) => 
     sendFrontendPage(res, "login");
 });
 
+router.get('/logout', (_req: Request, res: Response) => {
+    res.redirect("/api/auth/logout");
+});
+
 router.get('/:filename', (req: Request, res: Response) => {
     if (!req.cookies.currentPage) {
         return res.redirect('/');

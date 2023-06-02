@@ -1,5 +1,5 @@
 const tableListContainer = document.getElementById('table-list-container');
-const tableList = tableListContainer.getElementById("table-list");
+const tableList = document.getElementById("table-list");
 
 const createTableItem = (tableObject) => {    
     const { id: tableId, name: tableName, players: tablePlayers } = tableObject;
@@ -29,6 +29,8 @@ const createTableItem = (tableObject) => {
 const refreshTables = async () => {
     tableListContainer.classList.add("loading");
 
+    tableList.innerHTML = "";
+    
     const tablesArray = await fetchAPI("/api/table", {
         method: 'GET',
         headers: {
