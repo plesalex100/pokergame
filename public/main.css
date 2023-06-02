@@ -10,6 +10,7 @@ body {
     height: 100vh;
     overflow: hidden;
     font-family: AltonaSans;
+    position: relative;
 }
 
 .container {

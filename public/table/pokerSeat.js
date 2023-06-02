@@ -2,7 +2,7 @@
 const seatContainer = document.querySelector(".seats");
 const avilableStates = ["empty", "waiting", "playing", "folded", "allin", "winner"];
 
-import Player from '/player'
+import Player from '/player.js'
 
 class PokerSeat extends Player {
 

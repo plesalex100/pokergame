@@ -13,8 +13,6 @@ fetchAPI(`/api/table/${tableId}/join`, {
     }
 });
 
-import PokerSeat from "./pokerSeat";
-
 let pokerSeats = []
 for (let seatId = 1; seatId <= 6; seatId++) {
     pokerSeats.push(new PokerSeat(seatId));

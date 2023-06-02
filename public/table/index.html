@@ -4,6 +4,10 @@
     <title>Poker Game</title>
     <script src="/global/main.js" type="text/javascript" defer></script>
     <script src="/global/websocket.js" type="text/javascript" defer></script>
+
+    <script type="module" src="/card.js"></script>
+    <script type="module" src="/pokerSeat.js"></script>
+
     <script src="/script.js" type="text/javascript" defer></script>
     <link rel="stylesheet" href="/global/main.css">
     <link rel="stylesheet" href="/style.css">
@@ -25,9 +29,10 @@
                 
                 <!-- 
                  Seats Positions
-                      1  2
-                    6      3
-                      5  4
+                       1   2
+                    6         3
+                    5         4
+                       -   -
                 -->
                 <div class="seat" data-seat-id="1"></div> 
                 <div class="seat" data-seat-id="2"></div>
@@ -35,6 +40,25 @@
                 <div class="seat" data-seat-id="4"></div>
                 <div class="seat" data-seat-id="5"></div>
                 <div class="seat" data-seat-id="6"></div>
+
+            </div>
+
+            <div class="table-middle">
+
+                <div class="table-cards">
+
+                    <!-- Flop -->
+                    <div class="card on-table" data-card-id="1"></div>
+                    <div class="card on-table" data-card-id="2"></div>
+                    <div class="card on-table" data-card-id="3"></div>
+
+                    <!-- Turn -->
+                    <div class="card on-table" data-card-id="4"></div>
+                    
+                    <!-- River -->
+                    <div class="card on-table" data-card-id="5"></div>
+
+                </div>
 
             </div>
         </div>
