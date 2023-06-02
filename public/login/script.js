@@ -48,7 +48,7 @@ const submitForm = async () => {
         password: password.value
     };
 
-    const { success, message, user } = await fetchAPI(apiAction, {
+    const { success, message } = await fetchAPI(apiAction, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
