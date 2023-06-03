@@ -1,6 +1,8 @@
 import Card from "./card";
 import { Types as MongooseTypes } from "mongoose";
 import User from "../models/user";
+import Websocket from "ws";
+import PokerTable from "./pokerTable";
 
 interface User {
     username: string;
@@ -13,10 +15,14 @@ class Player {
     hand: Card[];
     ready: boolean;
     seatId: number;
+    socket: Websocket;
+    table: PokerTable;
 
     mongoId: MongooseTypes.ObjectId | undefined;
 
-    constructor(user: User, seatId: number) {
+    constructor(user: User, seatId: number, socket: Websocket, table: PokerTable) {
+
+        console.log(user);
         this.username = user.username;
         this.coins = user.coins || 0;
         this.hand = [];
@@ -28,6 +34,12 @@ class Player {
         });
 
         this.seatId = seatId;
+        this.socket = socket;
+        this.table = table;
+    }
+
+    sendData(data: any) {
+        this.socket.send(JSON.stringify(data));
     }
 
     bet(amount: number) : number {

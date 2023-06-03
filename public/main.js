@@ -20,6 +20,7 @@ const body = document.querySelector("body");
 
 let notificationCount = 0;
 const notify = (message, type = "info", hideMsec = 3000) => {
+    if (!message) return;
 
     const notificationContainer = document.createElement("div");
     notificationContainer.classList.add("notification-container");

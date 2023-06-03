@@ -46,7 +46,8 @@ class PokerSeat extends Player {
                 notify(message, "error");
                 return;
             }
-            joined = true;
+            joined = this.seatId;
+            username = user.username;
             notify(message, "success");
 
             this.state = "waiting";
@@ -60,8 +61,8 @@ class PokerSeat extends Player {
         console.log(user);
 
         this.element.innerHTML = `
-            <div class="user">
-                <img src="https://robohash.org/${user.username}.png?set=set5" alt="Avatar">
+            <div class="user" style="display: none;">
+                <img class="avatar" src="https://robohash.org/${user.username}.png?set=set5" alt="Avatar">
                 <span class="name">${user.username}</span>
                 <span class="coins"><img src='/global/images/coin.svg'/><span>${user.coins}</span></span>
                 <div class="player-cards">
@@ -70,6 +71,16 @@ class PokerSeat extends Player {
                 </div>
             </div>
         `;
+
+        if (isClient) {
+            this.element.querySelector(".user").classList.add("you");
+        }
+
+        // afiseaza userul doar dupa ce s-a incarcat imaginea
+        const userImage = this.element.querySelector(".avatar");
+        userImage.onload = () => {
+            this.element.querySelector(".user").removeAttribute("style");
+        }
 
         super._constructor(user, isClient);
     }

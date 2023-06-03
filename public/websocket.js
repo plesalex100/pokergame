@@ -2,6 +2,8 @@ const socket = new WebSocket('ws://localhost:3000');
 
 socket.onopen = () => {
     console.log('Connected to websocket server');
+
+    console.log(token);
 }
 
 socket.onmessage = (message) => {

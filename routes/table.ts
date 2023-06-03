@@ -1,6 +1,6 @@
 
 // current path: /api/table
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 const router = Router();
 
 import { randomBytes } from "crypto";
@@ -8,6 +8,7 @@ import { userAuth, RequestWithUser } from "../middleware/auth";
 import PokerTable from "../classes/pokerTable";
 
 import User from "../models/user";
+import { connectedClients } from "../index";
 
 let pokerTables = new Map<string, PokerTable>([
     ["abc", new PokerTable("abc", "Test Table")]
@@ -52,9 +53,24 @@ router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respon
         });
     }
 
+    const socket = connectedClients.get(req.user?.username as string);
+    if (!socket) {
+        return res.status(400).json({
+            success: false,
+            message: "Not connected to websocket"
+        });
+    }
+
     try {
 
         const table = pokerTables.get(tableId);
+        
+        if (!table) {
+            return res.status(400).json({
+                success: false,
+                message: "Table not found"
+            });
+        }
 
         if (!spectate) {
             const dbUser = await User.findOne({username: req.user?.username}, {coins: 1});
@@ -66,15 +82,15 @@ router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respon
                 });
             }
 
-            const success = table?.addPlayer({
+            const { success, message } = table.addPlayer({
                 username: req.user?.username as string,
                 coins: dbUser.coins
-            }, seatId);
+            }, seatId, socket);
 
             if (!success) {
                 return res.status(400).json({
                     success: false,
-                    message: "Seat already taken"
+                    message
                 });
             }
 
@@ -88,6 +104,8 @@ router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respon
             
             return;
         }
+
+        table.addSpectator(socket);
 
         res.status(200).json({
             success: true,

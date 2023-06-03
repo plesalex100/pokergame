@@ -78,6 +78,10 @@ input {
         }
     }
 
+    & > .user.you > span.name {
+        color: #3ad606;
+    }
+
     & > .user {
         width: 100%;
         aspect-ratio: 1;
@@ -100,9 +104,9 @@ input {
 
         & > span.name {
             position: absolute;
-            bottom: .5rem;
+            bottom: .4rem;
 
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #fafafa;
             text-shadow: 0 0 3px rgba(0, 0, 0, .6);
         }

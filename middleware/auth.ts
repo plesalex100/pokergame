@@ -22,8 +22,7 @@ const userAuth = async (req: RequestWithUser, res: Response, next: NextFunction)
     }
 
     try {
-        const decoded = jwt.verify(token, jwtSecret) as LoggedUser;
-        req.user = decoded;
+        req.user = authByCookie(token);
         next();
     } catch (err) {
         return res.status(401).json({
@@ -40,12 +39,15 @@ const userAuthOptional = async (req: RequestWithUser, _res: Response, next: Next
     }
 
     try {
-        const decoded = jwt.verify(token, jwtSecret) as LoggedUser;
-        req.user = decoded;
+        req.user = authByCookie(token);
         next();
     } catch (err) {
         return next();
     }
 }
 
-export { userAuth, userAuthOptional, RequestWithUser };
+const authByCookie = (token: string) => {
+    return jwt.verify(token, jwtSecret) as LoggedUser;
+}
+
+export { userAuth, userAuthOptional, RequestWithUser, authByCookie };
