@@ -1,4 +1,4 @@
-import Card from '/card.js';
+
 
 class Player {
 
@@ -195,5 +195,3 @@ class Player {
         this.isClient = false;
     }
 }
-
-export default Player;

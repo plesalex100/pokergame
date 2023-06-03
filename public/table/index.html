@@ -5,8 +5,9 @@
     <script src="/global/main.js" type="text/javascript" defer></script>
     <script src="/global/websocket.js" type="text/javascript" defer></script>
 
-    <script type="module" src="/card.js"></script>
-    <script type="module" src="/pokerSeat.js"></script>
+    <script src="/card.js" type="text/javascript" defer></script>
+    <script src="/player.js" type="text/javascript" defer></script>
+    <script src="/pokerSeat.js" type="text/javascript" defer></script>
 
     <script src="/script.js" type="text/javascript" defer></script>
     <link rel="stylesheet" href="/global/main.css">
@@ -17,11 +18,13 @@
     <div class="container">
 
         <div class="user-input" style="display: none;">
-            <input type="button" value="Check" />
+            <input type="button" value="Ready" /> <!-- Ready (la inceput) / Check / Call --> 
+            <input type="button" value="Bet" /> <!-- Bet / Raise -->
             <input type="button" value="Fold" />
-            <input type="button" value="Bet" />
-            <input type="button" value="Call" />
-            <input type="button" value="Raise" />
+
+            <div class="bet-input">
+                <input type="number" value="0" />
+            </div>
         </div>
 
         <div class="poker-table">

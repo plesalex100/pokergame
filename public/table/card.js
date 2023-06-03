@@ -13,5 +13,3 @@ class Card {
         this.suit = suit;
     }
 }
-
-export default Card;

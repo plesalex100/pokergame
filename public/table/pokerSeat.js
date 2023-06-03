@@ -2,17 +2,15 @@
 const seatContainer = document.querySelector(".seats");
 const avilableStates = ["empty", "waiting", "playing", "folded", "allin", "winner"];
 
-import Player from '/player.js'
-
 class PokerSeat extends Player {
 
     _state = false;
 
     constructor (seatId) {
+        super();
         this.seatId = seatId;
         this.element = seatContainer.querySelector(`.seat[data-seat-id="${seatId}"]`);
         this.state = "empty";
-        super();
     }
 
     set state (newState) {
@@ -57,10 +55,19 @@ class PokerSeat extends Player {
     }
 
     addUser (user, isClient = false) {
+        // user.username is already HTML escaped from register stage
+
+        console.log(user);
+
         this.element.innerHTML = `
             <div class="user">
                 <img src="https://robohash.org/${user.username}.png?set=set5" alt="Avatar">
-                <p>${user.username}</p>
+                <span class="name">${user.username}</span>
+                <span class="coins">${user.coins}</span>
+                <div class="player-cards">
+                    <div class="card" data-hidden></div>
+                    <div class="card" data-hidden></div>
+                </div>
             </div>
         `;
 
@@ -68,5 +75,3 @@ class PokerSeat extends Player {
     }
 
 }
-
-export default PokerSeat;

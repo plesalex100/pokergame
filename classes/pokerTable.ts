@@ -25,12 +25,20 @@ class PokerTable {
 
     addPlayer(user: User, seatId: number) {
         if (this.seats[seatId]) {
-            return false;
+            return {success: false, message: "Locul este deja ocupat"};
         }
         this.seats[seatId] = true;
+
+        for(let i = 0; i < this.players.length; i++) {
+            if (this.players[i].username === user.username) {
+                // TODO: remove user and add him to the new seat
+                return {success: false, message: "Esti deja asejat la masa"};
+            }
+        }
+
         this.players.push(new Player(user, seatId));
 
-        return true;
+        return {success: true};
     }
 
     dealCards() {

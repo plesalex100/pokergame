@@ -33,7 +33,7 @@ router.get("/", userAuth, async (_req: RequestWithUser, res: Response) => {
     res.status(200).json(pokerTablesAvailable);
 });
 
-router.get("/:tableId/join", userAuth, async (req: RequestWithUser, res: Response) => {
+router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Response) => {
 
     const { tableId } = req.params;
     const { spectate, seatId } = req.body;
@@ -77,6 +77,16 @@ router.get("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respons
                     message: "Seat already taken"
                 });
             }
+
+            res.status(200).json({
+                success: true,
+                user: {
+                    ...req.user,
+                    coins: dbUser.coins
+                }
+            });
+            
+            return;
         }
 
         res.status(200).json({

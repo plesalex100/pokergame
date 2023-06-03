@@ -60,6 +60,17 @@ router.post("/register", async (req: Request, res: Response) => {
             message: "Parola trebuie sa aiba minim 4 caractere"
         });
     }
+
+    // html escape username
+    const regex = /[&<"]/g;
+
+    if (regex.test(username)) {
+        return res.status(400).json({
+            success: false,
+            message: "Username-ul contine caractere interzise"
+        });
+    }
+
     const hashedPass = await hash(password, 10);
     try {
 
