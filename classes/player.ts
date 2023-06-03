@@ -46,49 +46,54 @@ class Player {
         if (flush.length >= 5) {
             const straightFlush = this.getStraight(flush);
             if (straightFlush.length >= 5) {
-                return {value: 1000 + this.getHighestCardValue(straightFlush), name: "Chinta Royala"};
+                return {highlightCards: straightFlush, value: 1000 + this.getHighestCardValue(straightFlush), name: "Chinta Royala"};
             }
-            return {value: 600 + this.getHighestCardValue(flush), name: "Culoare"};
+            return {highlightCards: flush, value: 600 + this.getHighestCardValue(flush), name: "Culoare"};
         }
 
         const straight = this.getStraight(hand);
         if (straight.length >= 5) {
-            return {value: 500 + this.getHighestCardValue(straight), name: "Chinta"};
+            return {highlightCards: straight, value: 500 + this.getHighestCardValue(straight), name: "Chinta"};
         }
 
         const fourOfAKind = this.getFourOfAKind(hand);
         if (fourOfAKind.length >= 4) {
-            return {value: 400 + this.getHighestCardValue(fourOfAKind), name: "Careu"};
+            return {highlightCards: fourOfAKind, value: 400 + this.getHighestCardValue(fourOfAKind), name: "Careu"};
         }
 
         const fullHouse = this.getFullHouse(hand);
         if (fullHouse.length >= 5) {
-            return {value: 300 + this.getHighestCardValue(fullHouse), name: "Full House"};
+            return {highlightCards: fullHouse, value: 300 + this.getHighestCardValue(fullHouse), name: "Full House"};
         }
 
         const threeOfAKind = this.getThreeOfAKind(hand);
         if (threeOfAKind.length >= 3) {
-            return {value: 200 + this.getHighestCardValue(threeOfAKind), name: "Trio"};
+            return {highlightCards: threeOfAKind, value: 200 + this.getHighestCardValue(threeOfAKind), name: "Trio"};
         }
 
         const twoPair = this.getTwoPair(hand);
         if (twoPair.length >= 4) {
-            return {value: 100 + this.getHighestCardValue(twoPair), name: "Doua perechi"};
+            return {highlightCards: twoPair, value: 100 + this.getHighestCardValue(twoPair), name: "Doua perechi"};
         }
 
         const onePair = this.getOnePair(hand);
         if (onePair.length >= 2) {
-            return {value: 50 + this.getHighestCardValue(onePair), name: "O pereche"};
+            return {highlightCards: onePair, value: 50 + this.getHighestCardValue(onePair), name: "O pereche"};
         }
 
-        return {value: this.getHighestCardValue(hand), name: "Carte mare"};
+        const highestCard = this.getHighestCard(hand);
+        return {highlightCards: [highestCard], value: highestCard.number, name: "Carte mare"};
     }
 
-    private getHighestCardValue(hand: Card[]) {
+    private getHighestCard(hand: Card[]) {
         const sortedHand = hand.sort((a, b) => {
             return b.number - a.number;
         });
-        return sortedHand[0].number;
+        return sortedHand[0];
+    }
+
+    private getHighestCardValue(hand: Card[]) {
+        return this.getHighestCard(hand).number;
     }
 
     private getStraight(hand: Card[]) {
