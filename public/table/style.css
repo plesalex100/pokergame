@@ -15,8 +15,10 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
+    transform: translateY(-5vh);
 
-    @media (max-width: 900px) {
+    @media (max-width: 1200px) {
+        transform: none;
         width: 95vw;
     }
 }
@@ -48,21 +50,14 @@ input {
     &[data-seat-id="5"] { bottom: 16%; left: -3%; }
     &[data-seat-id="6"] { top: 16%; left: -3%; }
 
-    &.empty > input {
-        width: 60%;
-        height: 15%;
+    &.empty > .btn {
+        width: 70%;
+        --color1: #1bd30a;
+        --color2: #25af13;
+        --radius: 15px;
 
-        font-size: 1.4rem;
-
-        border-radius: 5px;
-        background-color: #3ad606;
-        color: #fafafa;
-        transition: filter 300ms ease;
-
-        &:hover {
-            cursor: pointer;
-            filter: brightness(1.1);
-        }
+        --font-size: max(1.5vw, 20px);
+        transform: scale(.7);
     }
 
     &.left-orientation {
@@ -167,4 +162,90 @@ input {
         width: 100%;
         background-color: rgba(0, 0, 250, .5);
     }
+}
+
+
+.user-input {
+    position: absolute;
+    bottom: 2vh;
+    /* background-color: red; */
+
+    background-color: #01142c60;
+
+    border-radius: 10px;
+    
+    width: 50vw;
+    height: 12vh;
+
+    --gap: 1vh;
+    display: grid;
+    grid-template-columns: repeat(3, calc(20% - var(--gap))) 40%;
+    place-items: center;
+    padding-inline: var(--gap);
+    column-gap: var(--gap);
+    box-sizing: border-box;
+
+    @media (max-width: 1200px) {
+        width: 100vw;
+        bottom: 0;
+    }
+
+    & > .btn {
+        width: 90%;
+    }
+
+    & > .btn[data-input-id="3"] {
+        --color1: #c71717;
+        --color2: #a00d0d;
+    }
+
+    & > div.bet-input {
+        width: 100%;
+        height: 58px;
+        border-radius: 86px;
+
+        --color1: #0095c2;
+        --color2: #0a6d8b;
+        background-image: linear-gradient(92deg, var(--color1) 0, var(--color2) 100%);
+        isolation: isolate;
+
+        display: grid;
+        place-items: center;
+        grid-template-columns: 20% 80%;
+        overflow: visible;
+        position: relative;
+
+        background-color: #3ad606;
+
+        & > span {
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        & > input {
+            z-index: 1;
+            width: 90%;
+            height: 100%;
+            color: #fafafa;
+        }
+
+        &:before {
+            border-radius: 86px;
+            background-color: var(--color1);
+            opacity: .31;
+            content: "";
+            display: block;
+            height: 100%;
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            transform: scale(1.02, 1.12);
+            z-index: -1;
+        }
+    }
+
 }

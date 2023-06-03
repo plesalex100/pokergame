@@ -7,7 +7,7 @@
 body {
     margin: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     font-family: AltonaSans;
     position: relative;
@@ -77,5 +77,97 @@ body {
 
     &.hideanim {
         animation: hideNotification 200ms ease-in forwards;
+    }
+}
+
+
+
+.btn {
+    --color1: #0095c2;
+    --color2: #0a6d8b;
+    --color: #fafafa;
+    --radius: 80px;
+    --padding-block: 19px;
+    --padding-inline: 26px;
+    --min-height: 64px;
+    --font-size: 16px;
+
+    box-sizing: border-box;
+    color: var(--color);
+    cursor: pointer;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: var(--font-size);
+    font-weight: 800;
+    align-items: center;
+    justify-content: center;
+    line-height: 24px;
+    min-height: var(--min-height);
+
+    padding-block: var(--padding-block);
+    padding-inline: var(--padding-inline);
+
+    position: relative;
+    text-align: center;
+    user-select: none;
+    touch-action: manipulation;
+    z-index: 0;
+
+
+    @media (min-width: 768px) {
+        padding: 19px 32px;
+    }
+
+    &:before,
+    &:after {
+        border-radius: var(--radius);
+    }
+
+    &:before {
+        background-color: var(--color1);
+        opacity: .31;
+        content: "";
+        display: block;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: -2;
+    }
+
+    &:after {
+        background-color: initial;
+        background-image: linear-gradient(92deg, var(--color1) 0, var(--color2) 100%);
+        bottom: 4px;
+        content: "";
+        display: block;
+        left: 4px;
+        overflow: hidden;
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        transition: all 100ms ease-out;
+        z-index: -1;
+    }
+
+    &:hover:not(.disabled):after {
+        inset: 0;
+        transition-timing-function: ease-in;
+    }
+
+    &:active:not(.disabled) {
+        color: #ccc;
+    }
+
+    &:active:not(.disabled):after {
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2)), linear-gradient(92.83deg, var(--color1) 0, var(--color2) 100%);
+        inset: 4px;
+    }
+
+    &.disabled {
+        cursor: default;
+        opacity: .24;
     }
 }

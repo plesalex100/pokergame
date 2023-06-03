@@ -57,7 +57,7 @@ router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respon
     if (!socket) {
         return res.status(400).json({
             success: false,
-            message: "Not connected to websocket"
+            message: "Not connected to websocket (Refresh page)"
         });
     }
 

@@ -20,10 +20,9 @@ class PokerSeat extends Player {
         this._state = newState;
 
         if (newState === "empty") {
-            const joinBtn = document.createElement("input");
-            joinBtn.value = "Join";
-            joinBtn.type = "button";
-            joinBtn.classList.add("join-btn");
+            const joinBtn = document.createElement("div");
+            joinBtn.innerText = "Join";
+            joinBtn.classList.add("btn");
             joinBtn.addEventListener("click", () => {
                 this.joinTable();
             });

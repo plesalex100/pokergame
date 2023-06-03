@@ -59,7 +59,10 @@ class PokerTable {
         for(let i = 0; i < this.players.length; i++) {
             if (this.players[i].username === user.username) {
                 // TODO: remove user and add him to the new seat
-                return {success: false, message: "Esti deja asejat la masa"};
+                // return {success: false, message: "Esti deja asejat la masa"};
+
+                this.removePlayer(this.players[i]);
+                break;
             }
         }
 

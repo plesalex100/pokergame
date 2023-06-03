@@ -2,6 +2,24 @@
 const tableId = window.location.pathname.split("/")[2];
 let joined = false, username = false;
 
+// Ready, Check, Call
+const inputButton1 = document.querySelector(".user-input input[data-input-id='1']");
+
+// Bet / Raise
+const inputButton2 = document.querySelector(".user-input input[data-input-id='2']");
+
+// Fold
+const inputButton3 = document.querySelector(".user-input input[data-input-id='3']");
+
+// Bet Amount
+const inputButton4 = document.querySelector(".user-input input[data-input-id='4']");
+
+function updateRangeValue(input) {
+    let rangeValueElement = input.previousElementSibling;
+    rangeValueElement.innerText = input.value;
+}
+
+
 let pokerSeats = []
 for (let seatId = 1; seatId <= 6; seatId++) {
     pokerSeats.push(new PokerSeat(seatId));
@@ -45,6 +63,6 @@ socket.onmessage = (e) => {
     }
 }
 
-window.onbeforeunload = function() {
-    return "Esti sigur ca vrei sa parasesti jocul de poker ?";
-}
+// window.onbeforeunload = function() {
+//     return "Esti sigur ca vrei sa parasesti jocul de poker ?";
+// }
