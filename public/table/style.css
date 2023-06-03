@@ -34,8 +34,8 @@
 
     background-color: rgba(0, 250, 0, .5);
 
-    &[data-seat-id="1"] { top: -5%; left: 26%; }
-    &[data-seat-id="2"] { top: -5%; right: 26%; }
+    &[data-seat-id="1"] { top: -5%; left: 30%; }
+    &[data-seat-id="2"] { top: -5%; right: 30%; }
     &[data-seat-id="3"] { top: 16%; right: -3%; }
     &[data-seat-id="4"] { bottom: 16%; right: -3%; }
     &[data-seat-id="5"] { bottom: 16%; left: -3%; }
@@ -61,7 +61,6 @@
 
 .poker-table > .table-middle > .table-cards {
     width: 100%;
-    height: 60%;
 
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -69,7 +68,6 @@
 
     & > .card {
         width: 100%;
-        height: 100%;
         background-color: rgba(0, 0, 250, .5);
     }
 }
