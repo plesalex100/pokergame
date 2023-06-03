@@ -63,7 +63,7 @@ class PokerSeat extends Player {
             <div class="user">
                 <img src="https://robohash.org/${user.username}.png?set=set5" alt="Avatar">
                 <span class="name">${user.username}</span>
-                <span class="coins">${user.coins}</span>
+                <span class="coins"><img src='/global/images/coin.svg'/><span>${user.coins}</span></span>
                 <div class="player-cards">
                     <div class="card" data-hidden></div>
                     <div class="card" data-hidden></div>

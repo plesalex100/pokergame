@@ -35,7 +35,7 @@ input {
     width: 16%;
     aspect-ratio: 1;
 
-    background-color: rgba(0, 250, 0, .5);
+    /* background-color: rgba(0, 250, 0, .5); */
 
     display: flex;
     justify-content: center;
@@ -95,6 +95,7 @@ input {
 
             backdrop-filter: blur(3px) saturate(110%);
             background-color: #fafafa50;
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 0 95%);
         }
 
         & > span.name {
@@ -109,12 +110,27 @@ input {
         & > span.coins {
             position: absolute;
             bottom: 20%;
-            left: 20%;
-            font-size: 1.3rem;
-            color: #fafafa;
-            background: rgba(0, 0, 0, .7);
-            padding: 0.2rem 1rem;
+            min-width: 3rem;
+            font-size: 1.1rem;
+            color: #0d0d0d;
+            font-weight: 700;
+            background: #fafafa;
+            box-shadow: 0 0 6px 1px rgba(0, 0, 0, .3);
+            padding: .2rem .5rem;
             border-radius: 5px;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .2rem;
+
+            & > img {
+                height: 1.1rem;
+            }
+
+            & > span {
+                transform: translateY(.1rem);
+            }
         }
     }
 }
