@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-    <title>Poker Game</title>
+    <title>Ples Poker</title>
     <script src="/global/main.js" type="text/javascript" defer></script>
     <script src="/global/websocket.js" type="text/javascript" defer></script>
 
@@ -41,15 +41,15 @@
                 <div class="table-cards">
 
                     <!-- Flop -->
-                    <div class="card on-table" data-card-id="1"></div>
-                    <div class="card on-table" data-card-id="2"></div>
-                    <div class="card on-table" data-card-id="3"></div>
+                    <div class="card on-table" data-card-id="1" data-hidden="true"></div>
+                    <div class="card on-table" data-card-id="2" data-hidden="true"></div>
+                    <div class="card on-table" data-card-id="3" data-hidden="true"></div>
 
                     <!-- Turn -->
-                    <div class="card on-table" data-card-id="4"></div>
+                    <div class="card on-table" data-card-id="4" data-hidden="true"></div>
                     
                     <!-- River -->
-                    <div class="card on-table" data-card-id="5"></div>
+                    <div class="card on-table" data-card-id="5" data-hidden="true"></div>
 
                 </div>
 
@@ -65,6 +65,11 @@
                 <span class="range-value">0</span>
                 <input type="range" data-input-id="4" min="0" max="5000" value="0" oninput="updateRangeValue(this)" />
             </div>
+        </div>
+
+        <div class="user-settings">
+            <label for="white-deck">Carti Albe</label>
+            <input type="checkbox" id="white-deck"/>
         </div>
 
     </div>

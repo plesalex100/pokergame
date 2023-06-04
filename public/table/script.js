@@ -25,6 +25,14 @@ for (let seatId = 1; seatId <= 6; seatId++) {
     pokerSeats.push(new PokerSeat(seatId));
 }
 
+let cardsOnTable = [];
+for (let cardId = 1; cardId <= 5; cardId++) {
+    const cardElement = document.querySelector(`.table-cards .card.on-table[data-card-id="${cardId}"]`);
+    const cardObj = new Card(0, false, cardElement, true);
+
+    cardsOnTable.push(cardObj);
+}
+
 socket.onopen = () => {
     fetchAPI(`/api/table/${tableId}/join`, {
         method: 'POST',
@@ -60,6 +68,28 @@ socket.onmessage = (e) => {
             // tableData.stage
             // tableData.cardsOnTable
             return;
+        
+        // pune carti in mana (ascunse) la fiecare jucator care nu e client
+        case "dealPlayerCards":
+            for(let i = 1; i <= 6; i++) {
+                const seat = pokerSeats[i - 1];
+                if (seat.state !== "empty" && !seat.isClient) {
+                    pokerSeats[i - 1].setCards([{number: 0}, {number: 0}]);
+                }
+            }
+            return;
+
+        case "dealCards":
+            if (!joined) return;
+            pokerSeats[joined - 1].setCards(data.hand);
+            return;
+
+        case "setCardsOnTable":
+            data.cards.forEach((card, index) => {
+                card.setCard(data.cardsOnTable[index]);
+            });
+            return;
+
     }
 }
 

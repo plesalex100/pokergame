@@ -119,7 +119,7 @@ class PokerTable {
 
     private broadcast(data: any, exceptPlayer?: Player) {
         this.players.forEach(player => {
-            if (!exceptPlayer || player !== exceptPlayer) {
+            if (!exceptPlayer || player.mongoId !== exceptPlayer.mongoId) {
                 player.sendData(data);
             }
         });
@@ -146,8 +146,8 @@ class PokerTable {
         const flop: Card[] = this.deck.deal(3);
         this.cardsOnTable = flop;
         this.broadcast({
-            action: "insertCardsOnTable",
-            cards: flop
+            action: "setCardsOnTable",
+            cards: this.cardsOnTable
         });
     }
 
@@ -156,8 +156,8 @@ class PokerTable {
         this.cardsOnTable.push(turn[0]);
 
         this.broadcast({
-            action: "insertCardsOnTable",
-            cards: turn
+            action: "setCardsOnTable",
+            cards: this.cardsOnTable
         });
     }
 
@@ -166,8 +166,8 @@ class PokerTable {
         this.cardsOnTable.push(river[0]);
 
         this.broadcast({
-            action: "insertCardsOnTable",
-            cards: river
+            action: "setCardsOnTable",
+            cards: this.cardsOnTable
         });
     }
 

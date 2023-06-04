@@ -29,6 +29,10 @@ class PokerSeat extends Player {
 
             this.element.innerHTML = "";
             this.element.appendChild(joinBtn);
+
+            if (super.username) {
+                super.leaveSeat();
+            }
         }
     }
 
@@ -55,18 +59,16 @@ class PokerSeat extends Player {
     }
 
     addUser (user, isClient = false) {
+        
         // user.username is already HTML escaped from register stage
-
-        console.log(user);
-
         this.element.innerHTML = `
             <div class="user" style="display: none;">
                 <img class="avatar" src="https://robohash.org/${user.username}.png?set=set5" alt="Avatar">
                 <span class="name">${user.username}</span>
                 <span class="coins"><img src='/global/images/coin.svg'/><span>${user.coins}</span></span>
                 <div class="player-cards">
-                    <div class="card" data-hidden></div>
-                    <div class="card" data-hidden></div>
+                    <div class="card" data-hidden="true"></div>
+                    <div class="card" data-hidden="true"></div>
                 </div>
             </div>
         `;
@@ -81,7 +83,18 @@ class PokerSeat extends Player {
             this.element.querySelector(".user").removeAttribute("style");
         }
 
-        super._constructor(user, isClient);
+        // testing
+        user.hand = [{number: "2", suit: "Romb"}, {number: "J", suit: "Trefla"}];
+
+        const cardsContainer = this.element.querySelector(".player-cards");
+        super._constructor(user, isClient, cardsContainer);
+    }
+
+    setCards (cards) {
+        if (cards.length !== 2) throw new Error("Invalid cards array");
+        if (!this.username) return;
+
+        super.setHand(cards);
     }
 
 }

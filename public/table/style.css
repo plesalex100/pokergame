@@ -65,11 +65,19 @@ input {
         & > .user > span {
             transform: translateX(1rem);
         }
+
+        & > .user > .player-cards {
+            left: -48%;
+        }
     }
     &.right-orientation {
         & > .user > img,
         & > .user > span {
             transform: translateX(-1rem);
+        }
+
+        & > .user > .player-cards {
+            right: -48%;
         }
     }
 
@@ -131,13 +139,33 @@ input {
                 transform: translateY(.1rem);
             }
         }
+
+        & > .player-cards {
+            position: absolute;
+            display: flex;
+            height: 55%;
+            gap: 3%;
+            bottom: 27%;
+        }
     }
 }
 
 .card {
     /* card image width x height in px */
-    aspect-ratio: 716 / 1002;
+    aspect-ratio: 705 / 986;
+    position: relative;
+
+    &[data-hidden="true"] {
+        display: none;
+    }
+    
+    & > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
+
 
 .poker-table > .table-middle {
     width: 50%;
@@ -155,12 +183,12 @@ input {
     width: 100%;
 
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    column-gap: 5%;
+    --gap: 5%;
+    grid-template-columns: repeat(5, calc((100% - (var(--gap)*4)) / 5));
+    column-gap: var(--gap);
 
     & > .card {
         width: 100%;
-        background-color: rgba(0, 0, 250, .5);
     }
 }
 
@@ -248,4 +276,17 @@ input {
         }
     }
 
+}
+
+.user-settings {
+    position: absolute;
+    top: 2vh;
+    right: 2vw;
+
+    & > label {
+        display: block;
+        font-size: 1.2rem;
+        color: #fafafa;
+        margin-bottom: .5rem;
+    }
 }

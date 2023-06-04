@@ -4,19 +4,42 @@ class Player {
 
     username = false;
     coins = 0;
-    hand = false;
+    hand = [];
     isClient = false;
 
     constructor() { }
-    _constructor(user, isClient = false) {
+    _constructor(user, isClient = false, cardsContainer) {
         this.username = user.username;
         this.coins = user.coins || 0;
 
-        this.hand = user.hand ? user.hand.map(card => {
-            return new Card(card.number, card.suit);
-        }) : false;
+        if (user.hand) {
+            for(let i = 0; i < 2; i++) {
+                const card = user.hand[i];
+                const cardElement = cardsContainer.children[i];
+
+                this.hand[i] = new Card(card.number, card.suit, cardElement, false);
+            }
+        } else {
+            for(let i = 0; i < 2; i++) {
+                const cardElement = cardsContainer.children[i];
+                this.hand[i] = new Card(0, false, cardElement, true);
+            }
+        }
 
         this.isClient = isClient;
+    }
+
+    setHand (cards) {
+        for(let i = 0; i < 2; i++) {
+            const card = cards[i];
+            this.hand[i].setCard(card.number, card.suit);
+        }
+    }
+
+    hideHand () {
+        for(let i = 0; i < 2; i++) {
+            this.hand[i].hideCard();
+        }
     }
 
     getHandValue(cardsOnTable) {
