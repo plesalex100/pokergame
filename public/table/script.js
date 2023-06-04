@@ -33,6 +33,15 @@ for (let cardId = 1; cardId <= 5; cardId++) {
     cardsOnTable.push(cardObj);
 }
 
+let currentStage = 0;
+// 0 - waiting for players
+// 1 - pre-flop
+// 2 - flop
+// 3 - turn
+// 4 - river
+// 5 - showdown
+
+
 socket.onopen = () => {
     fetchAPI(`/api/table/${tableId}/join`, {
         method: 'POST',
@@ -63,20 +72,27 @@ socket.onmessage = (e) => {
             const tableData = data.table;
             tableData.players.forEach(player => {
                 pokerSeats[player.seatId - 1].addUser(player);
-            })
+            });
 
-            // tableData.stage
-            // tableData.cardsOnTable
+            currentStage = tableData.stage;
+
+            tableData.cardsOnTable.forEach((card, index) => {
+                cardsOnTable[index].setCard(card.number, card.suit);
+            });
             return;
         
         // pune carti in mana (ascunse) la fiecare jucator care nu e client
         case "dealPlayerCards":
             for(let i = 1; i <= 6; i++) {
                 const seat = pokerSeats[i - 1];
+                console.log("seat", i, "state", seat.state, "isClient", seat.isClient);
                 if (seat.state !== "empty" && !seat.isClient) {
+                    console.log("setting cards for seat", i, "to", "[{number: 0}, {number: 0}]")
                     pokerSeats[i - 1].setCards([{number: 0}, {number: 0}]);
                 }
             }
+
+            currentStage = 1;
             return;
 
         case "dealCards":
@@ -86,10 +102,28 @@ socket.onmessage = (e) => {
 
         case "setCardsOnTable":
             data.cards.forEach((card, index) => {
-                card.setCard(data.cardsOnTable[index]);
+                cardsOnTable[index].setCard(card.number, card.suit);
             });
             return;
 
+        case "resetCardsOnTable":
+            cardsOnTable.forEach(card => {
+                card.reset();
+            });
+            return;
+
+        case "winner":
+            notify(`Castigatorul este ${data.winner.username} cu ${data.winner.winningHand.name} !`, "success");
+            return;
+
+        case "reset":
+            pokerSeats.forEach(seat => {
+                seat.resetCards();
+            });
+            cardsOnTable.forEach(card => {
+                card.reset();
+            });
+            return;
     }
 }
 
@@ -104,7 +138,6 @@ function setAccessibility() {
         allCardsImages.forEach(cardImg => {
             let src = cardImg.src;
             src = src.replace("cards/", "cards_simple/");
-            console.log(cardImg, src)
             cardImg.setAttribute("src", src);
         });
 

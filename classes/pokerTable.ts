@@ -115,6 +115,10 @@ class PokerTable {
         });
 
         console.log(`User ${player.username} left table ${this.name} (${this.id})`);
+
+        if (this.players.length === 0) {
+            this.reset();
+        }
     }
 
     private broadcast(data: any, exceptPlayer?: Player) {
@@ -129,7 +133,7 @@ class PokerTable {
         });
     }
 
-    private dealCards() {
+    dealCards() {
         this.players.forEach(player => {
             player.hand = this.deck.deal(2);
 
@@ -142,7 +146,7 @@ class PokerTable {
         this.broadcast({ action: "dealPlayerCards" });
     }
 
-    private flop() {
+    flop() {
         const flop: Card[] = this.deck.deal(3);
         this.cardsOnTable = flop;
         this.broadcast({
@@ -151,7 +155,7 @@ class PokerTable {
         });
     }
 
-    private turn() {
+    turn() {
         const turn: Card[] = this.deck.deal(1);
         this.cardsOnTable.push(turn[0]);
 
@@ -161,7 +165,7 @@ class PokerTable {
         });
     }
 
-    private river() {
+    river() {
         const river: Card[] = this.deck.deal(1);
         this.cardsOnTable.push(river[0]);
 
@@ -178,6 +182,19 @@ class PokerTable {
                 winner = player;
             }
         });
+
+        this.broadcast({
+            action: "winner",
+            winner: {
+                username: winner.username,
+                winningHand: winner.getHandValueAndName(this.cardsOnTable)
+            }
+        });
+
+        setTimeout(() => {
+            this.reset();
+        }, 3000);
+
         return winner;
     }
 

@@ -31,7 +31,7 @@ class Card {
         
         const cardImage = document.createElement("img");
         cardImage.src = `/global/${accessibility ? 'cards_simple' : 'cards'}/${this.img}.png`;
-        cardImage.alt = this.label;
+        cardImage.alt = cardImage.title = this.label;
         this.element.innerHTML = "";
         this.element.appendChild(cardImage);
     }
@@ -47,6 +47,8 @@ class Card {
             return;
         }
 
+        number = numbers[number - 2];
+
         if (!numbers.includes(number)) throw new Error('Invalid Card Number');
         if (!suits.includes(suit)) throw new Error('Invalid Card Suit');
 
@@ -57,5 +59,9 @@ class Card {
         this.suit = suit;
 
         this.updateElement(hideElement);
+    }
+
+    reset(hideElement = true) {
+        this.setCard(0, false, hideElement);
     }
 }

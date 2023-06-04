@@ -151,4 +151,125 @@ router.post("/create", userAuth, async (req: RequestWithUser, res: Response) => 
     })
 });
 
+
+router.post("/:tableId/deal", (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    table.dealCards();
+    res.status(200).json({success: true});
+});
+
+router.post("/:tableId/flop", (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    table.flop();
+    res.status(200).json({success: true});
+});
+
+router.post("/:tableId/turn", (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    table.turn();
+    res.status(200).json({success: true});
+});
+
+router.post("/:tableId/river", (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    table.river();
+    res.status(200).json({success: true});
+});
+
+router.post("/:tableId/winner", (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    table.getWinner();
+    res.status(200).json({success: true});
+});
+
 export default router;

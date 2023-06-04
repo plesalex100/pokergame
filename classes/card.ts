@@ -13,9 +13,6 @@ class Card {
         if (!numbers.includes(number)) throw new Error('Invalid Card Number');
         if (!suits.includes(suit)) throw new Error('Invalid Card Suit');
 
-        this.label = number + ' de ' + suit;
-        
-        this.img = `${number}_${suits.indexOf(suit) + 1}`;
         this.number = numbers.indexOf(number) + 2;
         this.suit = suit;
     }

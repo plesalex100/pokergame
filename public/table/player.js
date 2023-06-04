@@ -29,6 +29,12 @@ class Player {
         this.isClient = isClient;
     }
 
+    resetHand () {
+        for(let i = 0; i < 2; i++) {
+            this.hand[i].reset();
+        }
+    }
+
     setHand (cards) {
         for(let i = 0; i < 2; i++) {
             const card = cards[i];

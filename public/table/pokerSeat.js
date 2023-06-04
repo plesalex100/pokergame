@@ -53,7 +53,6 @@ class PokerSeat extends Player {
             username = user.username;
             notify(message, "success");
 
-            this.state = "waiting";
             this.addUser(user, true);
         });
     }
@@ -84,9 +83,10 @@ class PokerSeat extends Player {
         }
 
         // testing
-        user.hand = [{number: 0, suit: "Romb"}, {number: "J", suit: "Trefla"}];
+        // user.hand = [{number: 0, suit: "Romb"}, {number: "J", suit: "Trefla"}];
 
         const cardsContainer = this.element.querySelector(".player-cards");
+        this.state = user.state || "waiting";
         super._constructor(user, isClient, cardsContainer);
     }
 
@@ -95,6 +95,11 @@ class PokerSeat extends Player {
         if (!this.username) return;
 
         super.setHand(cards);
+    }
+
+    resetCards () {
+        if (!this.username) return;
+        super.resetHand();
     }
 
 }
