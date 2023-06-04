@@ -84,7 +84,7 @@ class PokerSeat extends Player {
         }
 
         // testing
-        user.hand = [{number: "2", suit: "Romb"}, {number: "J", suit: "Trefla"}];
+        user.hand = [{number: 0, suit: "Romb"}, {number: "J", suit: "Trefla"}];
 
         const cardsContainer = this.element.querySelector(".player-cards");
         super._constructor(user, isClient, cardsContainer);

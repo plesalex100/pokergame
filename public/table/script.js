@@ -93,6 +93,31 @@ socket.onmessage = (e) => {
     }
 }
 
+const accessibilityCheckbox = document.getElementById("white-deck");
+accessibilityCheckbox.checked = localStorage.getItem("accessibility") === "true";
+
+function setAccessibility() {
+    localStorage.setItem("accessibility", accessibilityCheckbox.checked);
+    const allCardsImages = document.querySelectorAll(".card > img");
+    if (accessibilityCheckbox.checked) {
+
+        allCardsImages.forEach(cardImg => {
+            let src = cardImg.src;
+            src = src.replace("cards/", "cards_simple/");
+            console.log(cardImg, src)
+            cardImg.setAttribute("src", src);
+        });
+
+        return;
+    }
+
+    allCardsImages.forEach(cardImg => {
+        let src = cardImg.src;
+        src = src.replace("cards_simple/", "cards/");
+        cardImg.setAttribute("src", src);
+    });
+}
+
 // window.onbeforeunload = function() {
 //     return "Esti sigur ca vrei sa parasesti jocul de poker ?";
 // }

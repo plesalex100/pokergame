@@ -26,9 +26,11 @@ class Card {
         if (!this.element) return;
 
         this.element.dataset.hidden = hideElement;
+
+        const accessibility = localStorage.getItem("accessibility") === "true";
         
         const cardImage = document.createElement("img");
-        cardImage.src = `/global/cards/${this.img}.png`;
+        cardImage.src = `/global/${accessibility ? 'cards_simple' : 'cards'}/${this.img}.png`;
         cardImage.alt = this.label;
         this.element.innerHTML = "";
         this.element.appendChild(cardImage);
