@@ -18,7 +18,14 @@ connectDB();
 import routes from './routes';
 app.use('/', routes);
 
-const server = app.listen(process.env.PORT || 3000, () => {
+
+import fs from 'fs';
+import https from 'https';
+const publicKeyPath = '/home/codespace/.ssh/codespaces.auto.pub'
+const privateKeyPath = '/home/codespace/.ssh/codespaces.auto'
+
+
+const server = https.createServer({}, app).listen(process.env.PORT || 3000, () => {
     console.log('Server is running on port 3000');
 });
 
