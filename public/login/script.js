@@ -3,6 +3,8 @@ const loginForm = document.querySelector(".login-form");
 const registerInput = loginForm.querySelector(".register-input");
 const submitButton = loginForm.querySelector(".login-input > input[type='submit']");
 
+const loginHeaderObj = document.getElementById("login-header");
+
 const usernameFocusOut = async (name) => {
     
     if (!name) return;
@@ -22,9 +24,11 @@ const usernameFocusOut = async (name) => {
         if (available) {
             loginForm.dataset.api = "/api/auth/register";
             submitButton.value = "Register";
+            loginHeaderObj.innerHTML = "Register";
         } else {
             loginForm.dataset.api = "/api/auth/login";
             submitButton.value = "Login";
+            loginHeaderObj.innerHTML = "Login";
         }
     }
 }

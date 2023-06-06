@@ -15,10 +15,10 @@
         <div class="login-container">
 
             <div class="login-header">
-                <h1>Login</h1>
+                <h1 id="login-header">Register</h1>
             </div>
 
-            <div class="login-form" data-api="/api/auth/login">
+            <div class="login-form" data-api="/api/auth/register">
 
                 <div class="login-input">
                     <label for="username">Username</label>
@@ -31,7 +31,7 @@
                 </div>
 
                 <!-- Register input apare doar in monetul in care username-ul este nou -->
-                <div class="register-input hidden">
+                <div class="register-input">
                     <div class="login-input">
                         <label for="confirm-password">Confirm Password</label>
                         <input type="password" name="confirmPassword" id="confirm-password">
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="login-input">
-                    <input type="submit" value="Login" onclick="submitForm()">
+                    <input type="submit" value="Register" onclick="submitForm()">
                 </div>
             </div>
         </div>
