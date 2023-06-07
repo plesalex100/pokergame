@@ -2,14 +2,42 @@
 const tableId = window.location.pathname.split("/")[2];
 let joined = false, username = false;
 
+
+const postAction = async (action, data = {}) => {
+    return await fetchAPI(`/api/table/${tableId}/action`, {
+        method: 'POST',
+        body: JSON.stringify({ action, data })
+    });
+}
+
 // Ready, Check, Call
-const inputButton1 = document.querySelector(".user-input input[data-input-id='1']");
+const inputButton1 = document.querySelector(".user-input div[data-input-id='1']");
+inputButton1.addEventListener("click", () => {
+    if (inputButton1.classList.contains("disabled")) return;
+
+    switch (inputButton1.innerText) {
+        case "Ready":
+        case "Unready":
+            
+            postAction("ready");
+
+            break;
+    }
+});
 
 // Bet / Raise
-const inputButton2 = document.querySelector(".user-input input[data-input-id='2']");
+const inputButton2 = document.querySelector(".user-input div[data-input-id='2']");
+inputButton2.addEventListener("click", async () => {
+    if (inputButton2.classList.contains("disabled")) return;
+
+});
 
 // Fold
-const inputButton3 = document.querySelector(".user-input input[data-input-id='3']");
+const inputButton3 = document.querySelector(".user-input div[data-input-id='3']");
+inputButton3.addEventListener("click", async () => {
+    if (inputButton3.classList.contains("disabled")) return;
+
+});
 
 // Bet Amount
 const inputButton4 = document.querySelector(".user-input input[data-input-id='4']");
@@ -70,12 +98,18 @@ socket.onmessage = (e) => {
 
         case "initTable":
             const tableData = data.table;
+            currentStage = tableData.stage;
+            
             tableData.players.forEach(player => {
                 pokerSeats[player.seatId - 1].addUser(player);
+
+                if (currentStage === 0) {
+                    if (player.ready) {
+                        pokerSeats[player.seatId - 1].message("Ready");
+                    }
+                }
             });
-
-            currentStage = tableData.stage;
-
+            
             tableData.cardsOnTable.forEach((card, index) => {
                 cardsOnTable[index].setCard(card.number, card.suit);
             });
@@ -110,6 +144,17 @@ socket.onmessage = (e) => {
             cardsOnTable.forEach(card => {
                 card.reset();
             });
+            return;
+
+        case "togglePlayerReady":
+            const { seatId, ready } = data;
+
+            if (seatId === joined) {
+                inputButton1.innerText = ready ? "Unready" : "Ready";
+            }
+
+            pokerSeats[seatId - 1].message(ready ? "Ready" : false);
+
             return;
 
         case "winner":

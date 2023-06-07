@@ -120,6 +120,64 @@ router.post("/:tableId/join", userAuth, async (req: RequestWithUser, res: Respon
     }
 });
 
+router.post("/:tableId/action", userAuth, async (req: RequestWithUser, res: Response) => {
+
+    const { tableId } = req.params;
+    const { action, data } = req.body;
+
+    if (!tableId) {
+        return res.status(400).json({
+            success: false,
+            message: "Table ID required"
+        });
+    }
+
+    const table = pokerTables.get(tableId);
+
+    if (!table) {
+        return res.status(400).json({
+            success: false,
+            message: "Table not found"
+        });
+    }
+
+    const socket = connectedClients.get(req.user?.username as string);
+    if (!socket) {
+        return res.status(400).json({
+            success: false,
+            message: "Not connected to websocket (Refresh page)"
+        });
+    }
+
+    try {
+
+        switch (action) {
+
+            case "ready":
+                const newState = table.togglePlayerReady(req.user?.username as string);
+                res.status(200).json({
+                    success: true,
+                    ready: newState
+                });
+                return;
+
+            default: 
+                res.status(400).json({
+                    success: false,
+                    message: "Invalid action"
+                });
+                break;
+        }
+
+    } catch (err: any) {
+        res.status(400).json({
+            message: "An error occurred",
+            error: err.message,
+        })
+    }
+
+});
+
 router.post("/create", userAuth, async (req: RequestWithUser, res: Response) => {
 
     const { name } = req.body;

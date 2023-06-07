@@ -13,7 +13,7 @@ class Player {
     username: string;
     coins: number;
     hand: Card[];
-    ready: boolean;
+    ready: boolean = false;
     seatId: number;
     socket: Websocket;
     table: PokerTable;
@@ -27,7 +27,6 @@ class Player {
         this.coins = user.coins || 0;
         this.hand = [];
 
-        this.ready = false;
 
         User.findOne({username: this.username}, {_id: 1}).then((user) => {
             this.mongoId = user?._id;

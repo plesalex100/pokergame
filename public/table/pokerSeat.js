@@ -57,6 +57,27 @@ class PokerSeat extends Player {
         });
     }
 
+    message (msg, hideMsec = -1) {
+        const messageElement = this.element.querySelector(".message");
+        if (msg === false) {
+            messageElement.classList.add("hide-animation");
+            setTimeout(() => {
+                messageElement.classList.remove("show");
+                messageElement.classList.remove("hide-animation");
+            }, 500);
+            return;
+        }
+        const messageTextElement = messageElement.querySelector("span");
+        messageTextElement.innerText = msg;
+        messageElement.classList.remove("hide-animation");
+        messageElement.classList.add("show");
+
+        if (hideMsec === -1) return;
+        setTimeout(() => {
+            this.message(false);
+        }, hideMsec);
+    }
+
     addUser (user, isClient = false) {
         
         // user.username is already HTML escaped from register stage
@@ -68,6 +89,10 @@ class PokerSeat extends Player {
                 <div class="player-cards">
                     <div class="card" data-hidden="true"></div>
                     <div class="card" data-hidden="true"></div>
+                </div>
+
+                <div class="message">
+                    <span></span>
                 </div>
             </div>
         `;

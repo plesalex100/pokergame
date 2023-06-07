@@ -32,6 +32,21 @@ input {
     overflow: visible;
 }
 
+
+@keyframes show-message {
+    from {
+        opacity: 0;
+        transform: scale(.6) translateX(calc(var(--orientation) * 100%));
+    }
+}
+
+@keyframes hide-message {
+    to {
+        opacity: 0;
+        transform: scale(.6) translateX(calc(var(--orientation) * 100%));
+    }
+}
+
 .poker-table > .seats > .seat {
     position: absolute;
     width: 16%;
@@ -62,8 +77,13 @@ input {
 
     &.left-orientation {
         & > .user > img,
-        & > .user > span {
+        & > .user > span,
+        & > .user > .message {
             transform: translateX(1rem);
+        }
+
+        & > .user > .message {
+            --orientation: 1;
         }
 
         & > .user > .player-cards {
@@ -72,8 +92,13 @@ input {
     }
     &.right-orientation {
         & > .user > img,
-        & > .user > span {
+        & > .user > span,
+        & > .user > .message {
             transform: translateX(-1rem);
+        }
+
+        & > .user > .message {
+            --orientation: -1;
         }
 
         & > .user > .player-cards {
@@ -146,6 +171,30 @@ input {
             height: 55%;
             gap: 3%;
             bottom: 27%;
+        }
+
+        & > .message {
+            position: absolute;
+            top: 0;
+            padding: .5vh 1vw;
+
+            font-size: 1.2rem;
+            color: #fafafa;
+
+            border: 2px solid #08b4ff90;
+            backdrop-filter: blur(6px) saturate(110%);
+            background-color: #fafafa20;
+            border-radius: 5px;
+
+            animation: show-message 300ms ease-out;
+
+            &.hide-animation {
+                animation: hide-message 300ms ease-out forwards;
+            }
+
+            &:not(.show) {
+                display: none;
+            }
         }
     }
 }

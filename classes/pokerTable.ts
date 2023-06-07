@@ -41,7 +41,8 @@ class PokerTable {
                     return {
                         username: player.username,
                         seatId: player.seatId,
-                        coins: player.coins
+                        coins: player.coins,
+                        ready: player.ready
                     }
                 }),
                 cardsOnTable: this.cardsOnTable,
@@ -131,6 +132,41 @@ class PokerTable {
         this.spectators.forEach(socket => {
             socket.send(JSON.stringify(data));
         });
+    }
+
+    private tryToStartGame () {
+        if (this.players.length < 2) return;
+
+        let allReady = true;
+        this.players.forEach(player => {
+            if (!player.ready) allReady = false;
+        });
+
+        if (allReady) {
+            // this.startGame();
+        }
+    }
+
+    togglePlayerReady(username: string) {
+
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].username !== username) continue;
+
+            const player = this.players[i];
+
+            player.ready = !player.ready;
+            this.broadcast({
+                action: "togglePlayerReady",
+                seatId: player.seatId,
+                ready: player.ready
+            });
+
+            this.tryToStartGame();
+
+            return player.ready;
+        }
+
+        throw new Error(`Player with username ${username} not found at table ${this.id}`);
     }
 
     dealCards() {
