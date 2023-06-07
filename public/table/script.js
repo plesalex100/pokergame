@@ -118,6 +118,7 @@ socket.onmessage = (e) => {
         // pune carti in mana (ascunse) la fiecare jucator care nu e client
         case "dealPlayerCards":
             for(let i = 1; i <= 6; i++) {
+                if (i === joined) continue;
                 const seat = pokerSeats[i - 1];
                 console.log("seat", i, "state", seat.state, "isClient", seat.isClient);
                 if (seat.state !== "empty" && !seat.isClient) {
