@@ -18,6 +18,8 @@ class Player {
     socket: Websocket;
     table: PokerTable;
 
+    playing: boolean = false;
+
     mongoId: MongooseTypes.ObjectId | undefined;
 
     constructor(user: User, seatId: number, socket: Websocket, table: PokerTable) {
