@@ -36,7 +36,7 @@ class PokerTable {
     stage: number;
     timer: ReturnType<typeof setTimeout> | null = null;
 
-    seats: boolean[] = new Array(seatsOnTable).fill(false);
+    seats: boolean[] | Player[] = new Array(seatsOnTable).fill(false);
 
     gameData: GameData = defaultGameData;
 
@@ -76,25 +76,29 @@ class PokerTable {
         }));
     }
 
+    private getPlayerOnSeat(seatId: number) : Player | undefined {
+        return this.seats[seatId] as Player;
+    }
+
     addPlayer(user: User, seatId: number, socket: Websocket) : {success: boolean, message?: string} {
         if (this.seats[seatId]) {
             return {success: false, message: "Locul este deja ocupat"};
         }
-        this.seats[seatId] = true;
-
+        
         this.removeSpectator(socket);
 
         for(let i = 0; i < this.players.length; i++) {
             if (this.players[i].username === user.username) {
                 // TODO: remove user and add him to the new seat
                 // return {success: false, message: "Esti deja asejat la masa"};
-
+                
                 this.removePlayer(this.players[i]);
                 break;
             }
         }
-
+        
         const newPlayer = new Player(user, seatId, socket, this);
+        this.seats[seatId] = newPlayer;
 
         this.players.push(newPlayer);
         this.broadcast({
@@ -222,7 +226,7 @@ class PokerTable {
                         continue;
                     }
                     this.gameData.bigBlind = this.players[i + 1].seatId;
-                    
+
                     if (i === this.players.length - 2) {
                         this.gameData.turnSeat = this.players[0].seatId;
                         continue;
