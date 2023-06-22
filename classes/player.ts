@@ -43,9 +43,10 @@ class Player {
         this.socket.send(JSON.stringify(data));
     }
 
-    bet(amount: number) : number {
+    bet(amount: number) : boolean {
+        if (this.coins < amount) return false;
         this.coins -= amount;
-        return amount;
+        return true;
     }
 
     getHandValue(cardsOnTable: Card[]) : number {

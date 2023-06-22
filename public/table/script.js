@@ -96,6 +96,10 @@ socket.onmessage = (e) => {
             pokerSeats[data.seatId - 1].state = "empty";
             return;
 
+        case "sendMessage":
+            pokerSeats[data.seatId - 1].message(data.message, data.hideMsec || undefined);
+            return;
+
         case "initTable":
             const tableData = data.table;
             currentStage = tableData.stage;

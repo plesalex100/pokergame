@@ -24,6 +24,8 @@ const defaultGameData: GameData = {
     turnSeat: 0
 }
 
+const smallBlindPrice = 10;
+
 const seatsOnTable = 6;
 class PokerTable {
     
@@ -76,7 +78,7 @@ class PokerTable {
         }));
     }
 
-    private getPlayerOnSeat(seatId: number) : Player | undefined {
+    private getPlayerOnSeat(seatId: number) {
         return this.seats[seatId] as Player;
     }
 
@@ -236,10 +238,26 @@ class PokerTable {
                     continue;
                 }
 
+                // TODO: check if small blind and big blind are valid
+
+                const smallBlindPlayer = this.getPlayerOnSeat(this.gameData.smallBlind);
+                const bigBlindPlayer = this.getPlayerOnSeat(this.gameData.bigBlind);
+
+                smallBlindPlayer.bet(smallBlindPrice);
+                bigBlindPlayer.bet(smallBlindPrice * 2);
+
+                this.sendMessage(smallBlindPlayer, `Small Blind ${smallBlindPrice} coins`);
+                this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`);
+
                 break;
                 
         }
 
+    }
+
+    private sendMessage(player: Player, message: string, hideMsec: number | undefined = undefined) {
+        if (!this.players.includes(player)) return;
+        this.broadcast({ action: "sendMessage", seatId: player.seatId, message, hideMsec })
     }
 
     togglePlayerReady(username: string) {
