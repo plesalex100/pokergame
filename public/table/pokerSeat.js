@@ -1,6 +1,6 @@
 
 const seatContainer = document.querySelector(".seats");
-const avilableStates = ["empty", "waiting", "playing", "folded", "allin", "winner"];
+const avilableStates = ["empty", "waiting", "playing", "turn", "folded", "allin", "winner"];
 
 class PokerSeat extends Player {
 

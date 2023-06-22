@@ -28,7 +28,7 @@ const smallBlindPrice = 10;
 
 const seatsOnTable = 6;
 class PokerTable {
-    
+
     id: string;
     name: string;
     players: Player[] = [];
@@ -82,23 +82,23 @@ class PokerTable {
         return this.seats[seatId] as Player;
     }
 
-    addPlayer(user: User, seatId: number, socket: Websocket) : {success: boolean, message?: string} {
+    addPlayer(user: User, seatId: number, socket: Websocket): { success: boolean, message?: string } {
         if (this.seats[seatId]) {
-            return {success: false, message: "Locul este deja ocupat"};
+            return { success: false, message: "Locul este deja ocupat" };
         }
-        
+
         this.removeSpectator(socket);
 
-        for(let i = 0; i < this.players.length; i++) {
+        for (let i = 0; i < this.players.length; i++) {
             if (this.players[i].username === user.username) {
                 // TODO: remove user and add him to the new seat
                 // return {success: false, message: "Esti deja asejat la masa"};
-                
+
                 this.removePlayer(this.players[i]);
                 break;
             }
         }
-        
+
         const newPlayer = new Player(user, seatId, socket, this);
         this.seats[seatId] = newPlayer;
 
@@ -129,23 +129,23 @@ class PokerTable {
         });
 
         newPlayer.socket.on("close", () => {
-            this.removePlayer(newPlayer); 
+            this.removePlayer(newPlayer);
         });
 
         console.log(`User ${user.username} joined table ${this.name} (${this.id})`);
 
-        return {success: true};
+        return { success: true };
     }
 
     removePlayer(player: Player) {
         if (!this.players.includes(player)) return;
 
-        
+
         this.broadcast({
             action: "removePlayer",
             seatId: player.seatId
         });
-        
+
         this.seats[player.seatId] = false;
         this.players.splice(this.players.indexOf(player), 1);
 
@@ -168,7 +168,7 @@ class PokerTable {
         });
     }
 
-    private tryToStartGame () {
+    private tryToStartGame() {
         if (this.players.length < 2) return;
 
         let allReady = true;
@@ -202,7 +202,7 @@ class PokerTable {
         });
     }
 
-    private setGameStage (stage: number) {
+    private setGameStage(stage: number) {
         if (this.stage === stage) return;
 
         this.stage = stage;
@@ -212,7 +212,7 @@ class PokerTable {
                 this.reset();
                 this.tryToStartGame();
                 break;
-        
+
             case 1: // pre-flop
 
                 this.players.sort((a, b) => a.seatId - b.seatId);
@@ -234,7 +234,7 @@ class PokerTable {
                         continue;
                     }
                     this.gameData.turnSeat = this.players[i + 2].seatId;
-                
+
                     continue;
                 }
 
@@ -250,7 +250,7 @@ class PokerTable {
                 this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`);
 
                 break;
-                
+
         }
 
     }

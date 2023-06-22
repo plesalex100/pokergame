@@ -13,14 +13,14 @@ class Player {
         this.coins = user.coins || 0;
 
         if (user.hand) {
-            for(let i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 const card = user.hand[i];
                 const cardElement = cardsContainer.children[i];
 
                 this.hand[i] = new Card(card.number, card.suit, cardElement, false);
             }
         } else {
-            for(let i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 const cardElement = cardsContainer.children[i];
                 this.hand[i] = new Card(0, false, cardElement, true);
             }
