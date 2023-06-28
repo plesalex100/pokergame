@@ -136,7 +136,7 @@ socket.onmessage = (e) => {
 
         case "dealCards":
             if (!joined) return;
-            pokerSeats[joined - 1].setCards(data.hand);
+            pokerSeats[data.seatId || joined - 1].setCards(data.hand);
             return;
 
         case "setCardsOnTable":

@@ -13,36 +13,29 @@
     <div class="container">
 
         <div class="login-container">
-
             <div class="login-header">
                 <h1 id="login-header">Register</h1>
             </div>
-
             <div class="login-form" data-api="/api/auth/register">
-
                 <div class="login-input">
                     <label for="username">Username</label>
                     <input type="text" name="username" id="username" onfocusout="usernameFocusOut(this.value);" required>
                 </div>
-
                 <div class="login-input">
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" required>
                 </div>
-
                 <!-- Register input apare doar in monetul in care username-ul este nou -->
                 <div class="register-input">
                     <div class="login-input">
                         <label for="confirm-password">Confirm Password</label>
                         <input type="password" name="confirmPassword" id="confirm-password">
                     </div>
-
                     <div class="login-input">
                         <label for="email">Email</label>
                         <input type="email" name="email" id="email">
                     </div>
                 </div>
-
                 <div class="login-input">
                     <input type="submit" value="Register" onclick="submitForm()">
                 </div>
