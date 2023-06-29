@@ -78,6 +78,14 @@ class PokerSeat extends Player {
         }, hideMsec);
     }
 
+    setCoins (coins) {
+        console.log("set coins", coins);
+        if (!this.element) return;
+        const coinsElement = this.element.querySelector(".coins span");
+        console.log(coinsElement);
+        coinsElement.innerText = coins;
+    }
+
     addUser (user, isClient = false) {
         
         // user.username is already HTML escaped from register stage

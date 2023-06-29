@@ -82,6 +82,16 @@ socket.onopen = () => {
     });
 }
 
+const setPot = (pot) => {
+    if (pot == 0) {
+        document.querySelector(".table-pot").style.display = "none";
+        return;
+    }
+    document.querySelector(".table-pot").style.display = "flex";
+    
+    document.querySelector(".table-pot > span").innerText = pot;
+}
+
 socket.onmessage = (e) => {
     const data = JSON.parse(e.data);
 
@@ -100,6 +110,19 @@ socket.onmessage = (e) => {
             pokerSeats[data.seatId - 1].message(data.message, data.hideMsec || undefined);
             return;
 
+        case "setPlayerCoins":
+            pokerSeats[data.seatId - 1].setCoins(data.coins);
+            return;
+
+        case "setPot":
+            setPot(data.pot);
+            return;
+        
+        case "setTimer":
+            const { msec, title } = data;
+            notify(title, "info", msec);
+            return;
+
         case "initTable":
             const tableData = data.table;
             currentStage = tableData.stage;
@@ -113,6 +136,8 @@ socket.onmessage = (e) => {
                     }
                 }
             });
+
+            setPot(tableData.pot);
             
             tableData.cardsOnTable.forEach((card, index) => {
                 cardsOnTable[index].setCard(card.number, card.suit);

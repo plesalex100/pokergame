@@ -19,8 +19,8 @@ interface GameData {
 }
 const defaultGameData: GameData = {
     pot: 0,
-    smallBlind: 0,
-    bigBlind: 1,
+    smallBlind: -1,
+    bigBlind: -1,
     turnSeat: 0
 }
 
@@ -63,23 +63,28 @@ class PokerTable {
 
         socket.send(JSON.stringify({
             action: "initTable",
-            table: {
-                players: this.players.map(player => {
-                    return {
-                        username: player.username,
-                        seatId: player.seatId,
-                        coins: player.coins,
-                        ready: player.ready || false
-                    }
-                }),
-                cardsOnTable: this.cardsOnTable,
-                stage: this.stage
-            }
+            table: this.getInitTableData()
         }));
     }
 
     private getPlayerOnSeat(seatId: number) {
-        return this.seats[seatId] as Player;
+        return this.seats[seatId - 1] as Player;
+    }
+
+    private getInitTableData() {
+        return {
+            players: this.players.map(player => {
+                return {
+                    username: player.username,
+                    seatId: player.seatId,
+                    coins: player.coins,
+                    ready: player.ready || false
+                }
+            }),
+            pot: this.gameData.pot,
+            cardsOnTable: this.cardsOnTable,
+            stage: this.stage
+        }
     }
 
     addPlayer(user: User, seatId: number, socket: Websocket): { success: boolean, message?: string } {
@@ -100,7 +105,7 @@ class PokerTable {
         }
 
         const newPlayer = new Player(user, seatId, socket, this);
-        this.seats[seatId] = newPlayer;
+        this.seats[seatId - 1] = newPlayer;
 
         this.players.push(newPlayer);
         this.broadcast({
@@ -114,25 +119,14 @@ class PokerTable {
 
         newPlayer.sendData({
             action: "initTable",
-            table: {
-                players: this.players.map(player => {
-                    return {
-                        username: player.username,
-                        seatId: player.seatId,
-                        coins: player.coins,
-                        ready: player.ready || false
-                    }
-                }),
-                cardsOnTable: this.cardsOnTable,
-                stage: this.stage
-            }
+            table: this.getInitTableData()
         });
 
         newPlayer.socket.on("close", () => {
             this.removePlayer(newPlayer);
         });
 
-        console.log(`User ${user.username} joined table ${this.name} (${this.id})`);
+        console.log(`User ${user.username} joined table ${this.name} (${this.id}) on seat ${seatId}`);
 
         return { success: true };
     }
@@ -146,7 +140,7 @@ class PokerTable {
             seatId: player.seatId
         });
 
-        this.seats[player.seatId] = false;
+        this.seats[player.seatId - 1] = false;
         this.players.splice(this.players.indexOf(player), 1);
 
         console.log(`User ${player.username} left table ${this.name} (${this.id})`);
@@ -156,7 +150,15 @@ class PokerTable {
         }
     }
 
-    private broadcast(data: any, exceptPlayer?: Player) {
+    set pot (value: number) {
+        this.gameData.pot = value;
+        this.broadcast({
+            action: "setPot",
+            pot: value
+        });
+    }
+
+    broadcast(data: any, exceptPlayer?: Player) {
         this.players.forEach(player => {
             if (!exceptPlayer || player.mongoId !== exceptPlayer.mongoId) {
                 player.sendData(data);
@@ -215,36 +217,58 @@ class PokerTable {
 
             case 1: // pre-flop
 
-                this.players.sort((a, b) => a.seatId - b.seatId);
+                console.log("Pre-flop");
 
-                this.gameData.smallBlind = this.gameData.bigBlind;
-                for (let i = 0; i < this.players.length; i++) {
-                    this.players[i].playing = true;
+                const lastSmallBlind = this.gameData.smallBlind;
+                const lastBigBlind = this.gameData.bigBlind;
 
-                    if (this.players[i].seatId !== this.gameData.bigBlind) continue;
-                    if (i === this.players.length - 1) {
-                        this.gameData.bigBlind = this.players[0].seatId;
-                        this.gameData.turnSeat = this.players[1].seatId;
-                        continue;
+                if (lastSmallBlind === lastBigBlind) {
+                    // first time when game starts
+
+                    for(let seatIndex = 0; seatIndex < seatsOnTable; seatIndex++) {
+                        if (this.seats[seatIndex] === false) continue;
+    
+                        const player = this.seats[seatIndex] as Player;
+                        player.playing = true;
+
+                        const seatId = seatIndex + 1;
+
+                        if (this.gameData.smallBlind == lastSmallBlind) {
+                            this.gameData.smallBlind = seatId;
+                            continue;
+                        }
+                        this.gameData.bigBlind = seatId;
+                        break;
                     }
-                    this.gameData.bigBlind = this.players[i + 1].seatId;
 
-                    if (i === this.players.length - 2) {
-                        this.gameData.turnSeat = this.players[0].seatId;
-                        continue;
+                } else {
+                    let lastValidBigBlind = -1;
+                    while (this.gameData.smallBlind === lastSmallBlind) {
+                        this.gameData.bigBlind = (this.gameData.bigBlind % seatsOnTable) + 1;
+                        if (this.seats[this.gameData.bigBlind - 1] === false) continue;
+
+                        if (lastValidBigBlind === -1) {
+                            lastValidBigBlind = this.gameData.bigBlind;
+                            continue;
+                        }
+
+                        this.gameData.smallBlind = lastValidBigBlind;
+                        break;
                     }
-                    this.gameData.turnSeat = this.players[i + 2].seatId;
-
-                    continue;
                 }
 
-                // TODO: check if small blind and big blind are valid
+                console.log("this.gameData.smallBlind", this.gameData.smallBlind);
+                console.log("this.gameData.bigBlind", this.gameData.bigBlind);
 
                 const smallBlindPlayer = this.getPlayerOnSeat(this.gameData.smallBlind);
                 const bigBlindPlayer = this.getPlayerOnSeat(this.gameData.bigBlind);
 
-                smallBlindPlayer.bet(smallBlindPrice);
-                bigBlindPlayer.bet(smallBlindPrice * 2);
+                console.log("smallBlindPlayer", smallBlindPlayer.username);
+                console.log("bigBlindPlayer", bigBlindPlayer.username);
+
+                if (smallBlindPlayer.bet(smallBlindPrice) && bigBlindPlayer.bet(smallBlindPrice * 2)) {
+                    this.pot = smallBlindPrice * 3;
+                }
 
                 this.sendMessage(smallBlindPlayer, `Small Blind ${smallBlindPrice} coins`);
                 this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`);

@@ -46,6 +46,14 @@ class Player {
     bet(amount: number) : boolean {
         if (this.coins < amount) return false;
         this.coins -= amount;
+        User.updateOne({_id: this.mongoId}, {coins: this.coins});
+
+        this.table.broadcast({
+            action: "setCoins",
+            seatId: this.seatId,
+            coins: this.coins
+        });
+
         return true;
     }
 

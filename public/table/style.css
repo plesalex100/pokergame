@@ -226,18 +226,36 @@ input {
     justify-content: center;
     align-items: center;
 
-}
+    & > .table-pot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 5rem;
+        gap: 0.3rem;
 
-.poker-table > .table-middle > .table-cards {
-    width: 100%;
+        margin-bottom: .5rem;
+        font-size: 1.3rem;
+        background: #fafafa;
+        padding: 0.3rem 0.5rem;
+        border-radius: 5px;
+        color: #111;
 
-    display: grid;
-    --gap: 5%;
-    grid-template-columns: repeat(5, calc((100% - (var(--gap)*4)) / 5));
-    column-gap: var(--gap);
+        & > img {
+            height: 1.2rem;
+        }
+    }
 
-    & > .card {
+    & > .table-cards {
         width: 100%;
+    
+        display: grid;
+        --gap: 5%;
+        grid-template-columns: repeat(5, calc((100% - (var(--gap)*4)) / 5));
+        column-gap: var(--gap);
+    
+        & > .card {
+            width: 100%;
+        }
     }
 }
 
