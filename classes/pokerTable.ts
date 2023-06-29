@@ -88,7 +88,7 @@ class PokerTable {
     }
 
     addPlayer(user: User, seatId: number, socket: Websocket): { success: boolean, message?: string } {
-        if (this.seats[seatId]) {
+        if (this.seats[seatId - 1] !== false) {
             return { success: false, message: "Locul este deja ocupat" };
         }
 
@@ -134,7 +134,6 @@ class PokerTable {
     removePlayer(player: Player) {
         if (!this.players.includes(player)) return;
 
-
         this.broadcast({
             action: "removePlayer",
             seatId: player.seatId
@@ -145,7 +144,7 @@ class PokerTable {
 
         console.log(`User ${player.username} left table ${this.name} (${this.id})`);
 
-        if (this.players.length === 0) {
+        if (this.players.length < 2) {
             this.reset();
         }
     }
@@ -172,17 +171,20 @@ class PokerTable {
 
     private tryToStartGame() {
         if (this.players.length < 2) return;
+        
+        const totalReady = this.players.reduce((readyPlayers, player) => readyPlayers + (player.ready ? 1 : 0), 0);
 
-        let allReady = true;
-        this.players.forEach(player => {
-            if (!player.ready) allReady = false;
-        });
-
-        if (allReady) {
+        if (totalReady === this.players.length) {
             this.setTimer(() => {
                 this.setGameStage(1);
             }, 3000, "Jocul incepe");
+        } else {
+            this.clearTimer();
         }
+    }
+
+    private clearTimer() {
+        this.setTimer(() => { }, 0, "", true);
     }
 
     private setTimer(callback: () => void, msec: number, title: string, overwrite: boolean = false) {
@@ -191,6 +193,8 @@ class PokerTable {
             clearTimeout(this.timer);
             this.timer = null;
         }
+
+        if (msec === 0) return; // clear timer only
 
         this.timer = setTimeout(() => {
             callback();
@@ -202,6 +206,17 @@ class PokerTable {
             msec,
             title
         });
+    }
+
+    private pickNextRoundSeatId(currentSeatId: number) : number {
+        while (true) {
+            currentSeatId = (currentSeatId % seatsOnTable) + 1;
+            const player = this.getPlayerOnSeat(currentSeatId);
+
+            if (player && player.playing) {
+                return currentSeatId;
+            }
+        }
     }
 
     private setGameStage(stage: number) {
@@ -257,9 +272,6 @@ class PokerTable {
                     }
                 }
 
-                console.log("this.gameData.smallBlind", this.gameData.smallBlind);
-                console.log("this.gameData.bigBlind", this.gameData.bigBlind);
-
                 const smallBlindPlayer = this.getPlayerOnSeat(this.gameData.smallBlind);
                 const bigBlindPlayer = this.getPlayerOnSeat(this.gameData.bigBlind);
 
@@ -272,6 +284,13 @@ class PokerTable {
 
                 this.sendMessage(smallBlindPlayer, `Small Blind ${smallBlindPrice} coins`);
                 this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`);
+
+                this.dealCards();
+
+                this.gameData.turnSeat = this.pickNextRoundSeatId(this.gameData.bigBlind);
+                this.broadcast({
+                    action: "setGameStage",
+                })
 
                 break;
 
@@ -380,8 +399,12 @@ class PokerTable {
         this.deck.reset();
         this.cardsOnTable = [];
 
+        this.gameData = defaultGameData;
+        this.stage = 0;
+
         this.broadcast({
-            action: "reset"
+            action: "initTable",
+            table: this.getInitTableData()
         });
     }
 

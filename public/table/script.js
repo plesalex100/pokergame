@@ -47,9 +47,9 @@ function updateRangeValue(input) {
     rangeValueElement.innerText = input.value;
 }
 
-
+const seatsAtTable = 6;
 let pokerSeats = []
-for (let seatId = 1; seatId <= 6; seatId++) {
+for (let seatId = 1; seatId <= seatsAtTable; seatId++) {
     pokerSeats.push(new PokerSeat(seatId));
 }
 
@@ -146,15 +146,15 @@ socket.onmessage = (e) => {
         
         // pune carti in mana (ascunse) la fiecare jucator care nu e client
         case "dealPlayerCards":
-            for(let i = 1; i <= 6; i++) {
-                if (i === joined) continue;
-                const seat = pokerSeats[i - 1];
-                console.log("seat", i, "state", seat.state, "isClient", seat.isClient);
+
+            seatsAtTable.forEach((seat, seatIndex) => {
+                if (seatIndex + 1 === joined) return;
+                console.log("seat", (seatIndex + 1), "state", seat.state, "isClient", seat.isClient);
                 if (seat.state !== "empty" && !seat.isClient) {
-                    console.log("setting cards for seat", i, "to", "[{number: 0}, {number: 0}]")
-                    pokerSeats[i - 1].setCards([{number: 0}, {number: 0}]);
+                    console.log("setting cards for seat", (seatIndex + 1), "to", "[{number: 0}, {number: 0}]")
+                    seat.setCards([{number: 0}, {number: 0}]);
                 }
-            }
+            });
 
             currentStage = 1;
             return;
@@ -194,10 +194,12 @@ socket.onmessage = (e) => {
         case "reset":
             pokerSeats.forEach(seat => {
                 seat.resetCards();
+                seat.message(false);
             });
             cardsOnTable.forEach(card => {
                 card.reset();
             });
+            setPot(0);
             return;
     }
 }

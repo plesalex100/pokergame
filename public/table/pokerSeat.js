@@ -1,6 +1,6 @@
 
 const seatContainer = document.querySelector(".seats");
-const avilableStates = ["empty", "waiting", "playing", "turn", "folded", "allin", "winner"];
+const avilableStates = ["empty", "playing", "turn", "folded", "allin", "winner"];
 
 class PokerSeat extends Player {
 
@@ -19,20 +19,36 @@ class PokerSeat extends Player {
         this.element.classList.add(newState);
         this._state = newState;
 
+        switch (newState) {
+            case "empty":
+                const joinBtn = document.createElement("div");
+                joinBtn.innerText = "Join";
+                joinBtn.classList.add("btn");
+                joinBtn.addEventListener("click", () => {
+                    this.joinTable();
+                });
+
+                this.element.innerHTML = "";
+                this.element.appendChild(joinBtn);
+
+                if (super.username) {
+                    super.leaveSeat();
+                }
+                return;
+            case "playing":
+                // css class is enough
+                return;
+
+            case "turn":
+                if (super.isClient) {
+                    // show buttons
+                }
+                return;
+                
+        }
+
         if (newState === "empty") {
-            const joinBtn = document.createElement("div");
-            joinBtn.innerText = "Join";
-            joinBtn.classList.add("btn");
-            joinBtn.addEventListener("click", () => {
-                this.joinTable();
-            });
-
-            this.element.innerHTML = "";
-            this.element.appendChild(joinBtn);
-
-            if (super.username) {
-                super.leaveSeat();
-            }
+            
         }
     }
 
@@ -58,6 +74,7 @@ class PokerSeat extends Player {
     }
 
     message (msg, hideMsec = -1) {
+        if (!this.element) return;
         const messageElement = this.element.querySelector(".message");
         if (msg === false) {
             messageElement.classList.add("hide-animation");

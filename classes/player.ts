@@ -49,7 +49,7 @@ class Player {
         User.updateOne({_id: this.mongoId}, {coins: this.coins});
 
         this.table.broadcast({
-            action: "setCoins",
+            action: "setPlayerCoins",
             seatId: this.seatId,
             coins: this.coins
         });
