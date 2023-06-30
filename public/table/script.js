@@ -150,7 +150,8 @@ socket.onmessage = (e) => {
             });
 
             setPot(tableData.pot);
-            
+
+            cardsOnTable.forEach(card => card.reset());
             tableData.cardsOnTable.forEach((card, index) => {
                 cardsOnTable[index].setCard(card.number, card.suit);
             });
@@ -247,6 +248,10 @@ socket.onmessage = (e) => {
 
         case "winner":
             notify(`Castigatorul este ${data.winner.username} cu ${data.winner.winningHand.name} !`, "success");
+            pokerSeats[data.winner.seatId - 1].state = "winner";
+            setTimeout(() => {
+                pokerSeats[data.winner.seatId - 1].state = "playing";
+            }, 3000);
             return;
 
         case "reset":

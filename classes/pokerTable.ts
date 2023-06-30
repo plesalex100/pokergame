@@ -267,6 +267,13 @@ class PokerTable {
                     }
 
                 } else {
+
+                    for (let seatIndex = 0; seatIndex < seatsOnTable; seatIndex++) {
+                        if (this.seats[seatIndex] === false) continue;
+                        const player = this.seats[seatIndex] as Player;
+                        player.playing = true;
+                    }
+
                     let lastValidBigBlind = -1;
                     while (this.gameData.smallBlind === lastSmallBlind) {
                         this.gameData.bigBlind = (this.gameData.bigBlind % seatsOnTable) + 1;
@@ -375,6 +382,12 @@ class PokerTable {
                 console.log("Get Winner");
 
                 this.getWinner();
+
+                setTimeout(() => {
+                    this.setTimer(() => {
+                        this.setGameStage(1);
+                    }, 3000, "Jocul se reseteaza in 3 secunde");
+                }, 4000);
 
                 break;
 
@@ -494,10 +507,17 @@ class PokerTable {
                 seatId: player.seatId
             });
 
+            const remainingPlayers = this.players.reduce((acc, ply) => acc + (ply.playing ? 1 : 0), 0);
+
+            if (remainingPlayers === 1) {
+                this.setGameStage(5);
+                return true;
+            }
+
             const nextSeatId = this.pickNextRoundSeatId();
             if (nextSeatId === false) {
                 this.setGameStage(this.stage + 1);
-                return;
+                return true;
             }
 
             this.gameData.turnSeat = nextSeatId as number;
@@ -593,13 +613,14 @@ class PokerTable {
             action: "winner",
             winner: {
                 username: winner.username,
+                seatId: winner.seatId,
                 winningHand: winner.getHandValueAndName(this.cardsOnTable)
             }
         });
 
-        // setTimeout(() => {
-        //     this.reset();
-        // }, 3000);
+        setTimeout(() => {
+            this.reset();
+        }, 3000);
 
         return winner;
     }
@@ -610,7 +631,6 @@ class PokerTable {
             player._betNeeded = 0;
             player.currentBet = 0;
             player.playing = false;
-            player.ready = false;
         });
         this.deck.reset();
         this.cardsOnTable = [];

@@ -172,6 +172,9 @@ router.post("/:tableId/action", userAuth, async (req: RequestWithUser, res: Resp
             case "bet":
                 table.bet(req.user?.username as string, data.amount);
 
+            case "fold":
+                table.fold(req.user?.username as string);
+
             default: 
                 res.status(400).json({
                     success: false,
