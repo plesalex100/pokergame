@@ -42,6 +42,17 @@ class Player {
         this.table = table;
     }
 
+    giveCoins(amount: number) {
+        this.coins += amount;
+        User.updateOne({username: this.username}, {coins: this.coins});
+
+        this.table.broadcast({
+            action: "setPlayerCoins",
+            seatId: this.seatId,
+            coins: this.coins
+        });
+    }
+
     get betNeeded() {
         return Math.max(0, this._betNeeded - this.currentBet);
     }
@@ -64,7 +75,7 @@ class Player {
         this.coins -= amount;
         this.currentBet += amount;
 
-        User.updateOne({_id: this.mongoId}, {coins: this.coins});
+        User.updateOne({username: this.username}, {coins: this.coins});
 
         this.table.broadcast({
             action: "setPlayerCoins",

@@ -609,6 +609,8 @@ class PokerTable {
             }
         }
 
+        winner.giveCoins(this.pot);
+
         this.broadcast({
             action: "winner",
             winner: {
