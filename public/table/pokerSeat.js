@@ -19,20 +19,6 @@ class PokerSeat extends Player {
         this.element.classList.add(newState);
         this._state = newState;
 
-        const inputButton1 = document.querySelector(".user-input div[data-input-id='1']");
-        const inputButton2 = document.querySelector(".user-input div[data-input-id='2']");
-        const inputButton3 = document.querySelector(".user-input div[data-input-id='3']");
-
-        
-        if (super.isClient) {
-            console.log(inputButton1);
-            if (inputButton1.innerText !== "Ready" && inputButton1.innerText !== "Unready") {
-                inputButton1.classList.add("disabled");
-            }
-            inputButton2.classList.add("disabled");
-            inputButton3.classList.add("disabled");
-        }
-
         switch (newState) {
             case "empty":
                 const joinBtn = document.createElement("div");
@@ -47,14 +33,6 @@ class PokerSeat extends Player {
                 
                 if (super.username) {
                     super.leaveSeat();
-                }
-                return;
-
-            case "turn":
-                if (super.isClient) {
-                    inputButton1.classList.remove("disabled");
-                    inputButton2.classList.remove("disabled");
-                    inputButton3.classList.remove("disabled");
                 }
                 return;
 
@@ -110,10 +88,8 @@ class PokerSeat extends Player {
     }
 
     setCoins (coins) {
-        console.log("set coins", coins);
         if (!this.element) return;
         const coinsElement = this.element.querySelector(".coins span");
-        console.log(coinsElement);
         coinsElement.innerText = coins;
     }
 

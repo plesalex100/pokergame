@@ -161,9 +161,7 @@ socket.onmessage = (e) => {
             for(let i = 1; i <= seatsAtTable; i++) {
                 if (i === joined) continue;
                 const seat = pokerSeats[i - 1];
-                console.log("seat", i, "state", seat.state, "isClient", seat.isClient);
                 if (seat.state !== "empty" && !seat.isClient) {
-                    console.log("setting cards for seat", i, "to", "[{number: 0}, {number: 0}]")
                     pokerSeats[i - 1].setCards([{number: 0}, {number: 0}]);
                     pokerSeats[i - 1].state = "playing";
                 }
@@ -187,6 +185,8 @@ socket.onmessage = (e) => {
                 inputButton2.innerText = "Bet";
 
                 inputButton4.attributes.min.value = 20;
+                inputButton4.value = 20;
+                updateRangeValue(inputButton4);
                 return;
             }
 
@@ -194,10 +194,27 @@ socket.onmessage = (e) => {
             inputButton1.dataset.action = "call";
             inputButton2.innerText = "Raise";
             inputButton4.attributes.min.value = betNeeded * 2;
+            inputButton4.value = betNeeded * 2;
+            updateRangeValue(inputButton4);
 
             return;
 
         case "setPlayerTurn":
+            pokerSeats.forEach(seat => {
+                if (seat.state !== "turn") return;
+                seat.state = "playing";
+            });
+
+            if (data.seatId === joined) {
+                inputButton1.classList.remove("disabled");
+                inputButton2.classList.remove("disabled");
+                inputButton3.classList.remove("disabled");
+            } else {
+                inputButton1.classList.add("disabled");
+                inputButton2.classList.add("disabled");
+                inputButton3.classList.add("disabled");
+            }
+
             pokerSeats[data.seatId - 1].state = "turn";
             return;
 

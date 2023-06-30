@@ -149,11 +149,15 @@ class PokerTable {
         }
     }
 
+    get pot () {
+        return this.gameData.pot;
+    }
+
     set pot (value: number) {
         this.gameData.pot = value;
         this.broadcast({
             action: "setPot",
-            pot: value
+            pot: this.gameData.pot
         });
     }
 
@@ -187,7 +191,7 @@ class PokerTable {
         this.setTimer(() => { }, 0, "", true);
     }
 
-    private setTimer(callback: () => void, msec: number, title: string, overwrite: boolean = false) {
+    private setTimer(callback: () => void, msec: number, title: string = "", overwrite: boolean = false) {
         if (this.timer) {
             if (!overwrite) return;
             clearTimeout(this.timer);
@@ -201,11 +205,13 @@ class PokerTable {
             this.timer = null;
         }, msec);
 
-        this.broadcast({
-            action: "setTimer",
-            msec,
-            title
-        });
+        if (title.length > 0) {
+            this.broadcast({
+                action: "setTimer",
+                msec,
+                title
+            });
+        }
     }
 
     private pickNextRoundSeatId(currentSeatId: number = this.gameData.turnSeat) : number | boolean {
@@ -299,17 +305,76 @@ class PokerTable {
 
                 this.dealCards();
 
-                this.gameData.turnSeat = this.pickNextRoundSeatId(this.gameData.bigBlind) as number;
+                const nextPlayer = this.pickNextRoundSeatId(this.gameData.bigBlind);
+
+                if (nextPlayer === false) {
+                    throw new Error("No player found as next round player, this should not happen");
+                }
+                this.gameData.turnSeat = nextPlayer as number;
                 this.broadcast({
                     action: "setPlayerTurn",
                     seatId: this.gameData.turnSeat
                 });
+    
+                break;
+
+            case 2: // flop
+
+                console.log("Flop");
+
+                this.players.forEach(player => {
+                    if (!player.playing) return;
+                    player.needAction = true;
+                });
+
+                this.gameData.turnSeat = this.pickNextRoundSeatId() as number;
+                this.broadcast({
+                    action: "setPlayerTurn",
+                    seatId: this.gameData.turnSeat
+                });
+                this.flop();
 
                 break;
 
-            case 1: // flop
+            case 3: // turn
+                
+                console.log("Turn");
+                this.players.forEach(player => {
+                    if (!player.playing) return;
+                    player.needAction = true;
+                });
 
-                console.log("Flop");
+                this.gameData.turnSeat = this.pickNextRoundSeatId() as number;
+                this.broadcast({
+                    action: "setPlayerTurn",
+                    seatId: this.gameData.turnSeat
+                });
+                this.turn();
+
+                break;
+
+            case 4: // river
+
+                console.log("River");
+                this.players.forEach(player => {
+                    if (!player.playing) return;
+                    player.needAction = true;
+                });
+
+                this.gameData.turnSeat = this.pickNextRoundSeatId() as number;
+                this.broadcast({
+                    action: "setPlayerTurn",
+                    seatId: this.gameData.turnSeat
+                });
+                this.river();
+
+                break;
+
+            case 5: // showdown
+
+                console.log("Get Winner");
+
+                this.getWinner();
 
                 break;
 
@@ -361,9 +426,11 @@ class PokerTable {
 
             // TODO: if player has less coins than betNeeded take some action
             if (player.bet(betNeeded)) {
-                this.pot += betNeeded;
+                this.pot = this.pot + betNeeded;
                 this.sendMessage(player, `Call ${betNeeded} coins`, 2000);
             }
+
+            player.needAction = false;
 
             const nextSeatId = this.pickNextRoundSeatId();
             if (nextSeatId === false) {
@@ -391,17 +458,18 @@ class PokerTable {
                 return false;
             }
 
-            this.pot += amount;
+            this.pot = this.pot + amount;
             
             const betNeeded = player.betNeeded;
             this.sendMessage(player, `${betNeeded === 0 ? 'Bet' : 'Raise'} ${amount} coins`, 2000);
 
             this.players.forEach(ply => {
                 if (!ply.playing) return;
-                if (ply === player) return;
                 ply.needAction = true;
-                ply.betNeeded += amount;
+                ply.betNeeded = ply.betNeeded + amount;
             });
+
+            player.needAction = false;
 
             this.gameData.turnSeat = this.pickNextRoundSeatId() as number;
             this.broadcast({
@@ -539,6 +607,10 @@ class PokerTable {
     reset() {
         this.players.forEach(player => {
             player.hand = [];
+            player._betNeeded = 0;
+            player.currentBet = 0;
+            player.playing = false;
+            player.ready = false;
         });
         this.deck.reset();
         this.cardsOnTable = [];
