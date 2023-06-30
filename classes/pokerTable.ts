@@ -208,12 +208,16 @@ class PokerTable {
         });
     }
 
-    private pickNextRoundSeatId(currentSeatId: number) : number {
+    private pickNextRoundSeatId(currentSeatId: number = this.gameData.turnSeat) : number | boolean {
+
+        if (this.players.length < 2) return false;
+        if (this.players.reduce((total, player) => total + (player.needAction ? 1 : 0), 0) === 0) return false;
+
         while (true) {
             currentSeatId = (currentSeatId % seatsOnTable) + 1;
             const player = this.getPlayerOnSeat(currentSeatId);
 
-            if (player && player.playing) {
+            if (player && player.playing && player.needAction) {
                 return currentSeatId;
             }
         }
@@ -277,20 +281,35 @@ class PokerTable {
 
                 console.log("smallBlindPlayer", smallBlindPlayer.username);
                 console.log("bigBlindPlayer", bigBlindPlayer.username);
+                
+                for (let i = 0; i < this.players.length; i++) {
+                    const player = this.players[i];
+                    if (!player.playing) continue;
 
+                    player.needAction = true;
+                    player.betNeeded = smallBlindPrice * 2;
+                }
+                
                 if (smallBlindPlayer.bet(smallBlindPrice) && bigBlindPlayer.bet(smallBlindPrice * 2)) {
                     this.pot = smallBlindPrice * 3;
                 }
 
-                this.sendMessage(smallBlindPlayer, `Small Blind ${smallBlindPrice} coins`);
-                this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`);
+                this.sendMessage(smallBlindPlayer, `Small Blind ${smallBlindPrice} coins`, 4000);
+                this.sendMessage(bigBlindPlayer, `Big Blind ${smallBlindPrice * 2} coins`, 4000);
 
                 this.dealCards();
 
-                this.gameData.turnSeat = this.pickNextRoundSeatId(this.gameData.bigBlind);
+                this.gameData.turnSeat = this.pickNextRoundSeatId(this.gameData.bigBlind) as number;
                 this.broadcast({
-                    action: "setGameStage",
-                })
+                    action: "setPlayerTurn",
+                    seatId: this.gameData.turnSeat
+                });
+
+                break;
+
+            case 1: // flop
+
+                console.log("Flop");
 
                 break;
 
@@ -301,6 +320,126 @@ class PokerTable {
     private sendMessage(player: Player, message: string, hideMsec: number | undefined = undefined) {
         if (!this.players.includes(player)) return;
         this.broadcast({ action: "sendMessage", seatId: player.seatId, message, hideMsec })
+    }
+
+    check(username: string) {
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player.username !== username) continue;
+            if (!player.needAction) return false;
+            if (this.gameData.turnSeat !== player.seatId) return false;
+
+            if (player.betNeeded > 0) return false;
+
+            player.needAction = false;
+            this.sendMessage(player, `Check`, 2000);
+
+            const nextSeatId = this.pickNextRoundSeatId();
+            if (nextSeatId === false) {
+                this.setGameStage(this.stage + 1);
+                return true;
+            }
+
+            this.gameData.turnSeat = nextSeatId as number;
+            this.broadcast({
+                action: "setPlayerTurn",
+                seatId: this.gameData.turnSeat
+            });
+
+            return true;
+        }
+    }
+
+    call(username: string) {
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player.username !== username) continue;
+            if (!player.needAction) return false;
+            if (this.gameData.turnSeat !== player.seatId) return false;
+            
+            const betNeeded = player.betNeeded;
+
+            // TODO: if player has less coins than betNeeded take some action
+            if (player.bet(betNeeded)) {
+                this.pot += betNeeded;
+                this.sendMessage(player, `Call ${betNeeded} coins`, 2000);
+            }
+
+            const nextSeatId = this.pickNextRoundSeatId();
+            if (nextSeatId === false) {
+                this.setGameStage(this.stage + 1);
+                return true;
+            }
+
+            this.gameData.turnSeat = nextSeatId as number;
+            this.broadcast({
+                action: "setPlayerTurn",
+                seatId: this.gameData.turnSeat
+            });
+            return true;
+        }
+    }
+
+    bet(username: string, amount: number) {
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player.username !== username) continue;
+            if (!player.needAction) return false;
+            if (this.gameData.turnSeat !== player.seatId) return false;
+
+            if (!player.bet(amount)) {
+                return false;
+            }
+
+            this.pot += amount;
+            
+            const betNeeded = player.betNeeded;
+            this.sendMessage(player, `${betNeeded === 0 ? 'Bet' : 'Raise'} ${amount} coins`, 2000);
+
+            this.players.forEach(ply => {
+                if (!ply.playing) return;
+                if (ply === player) return;
+                ply.needAction = true;
+                ply.betNeeded += amount;
+            });
+
+            this.gameData.turnSeat = this.pickNextRoundSeatId() as number;
+            this.broadcast({
+                action: "setPlayerTurn",
+                seatId: this.gameData.turnSeat
+            });
+            return true;
+        }
+    }
+
+    fold(username: string) {
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player.username !== username) continue;
+            if (!player.needAction) return false;
+            if (this.gameData.turnSeat !== player.seatId) return false;
+
+            this.sendMessage(player, `Fold`, 2000);
+            player.playing = false;
+            this.broadcast({
+                action: "setPlayerFold",
+                seatId: player.seatId
+            });
+
+            const nextSeatId = this.pickNextRoundSeatId();
+            if (nextSeatId === false) {
+                this.setGameStage(this.stage + 1);
+                return;
+            }
+
+            this.gameData.turnSeat = nextSeatId as number;
+            this.broadcast({
+                action: "setPlayerTurn",
+                seatId: this.gameData.turnSeat
+            });
+
+            return true;
+        }
     }
 
     togglePlayerReady(username: string) {
@@ -369,13 +508,18 @@ class PokerTable {
         });
     }
 
-    getWinner() {
-        let winner = this.players[0];
-        this.players.forEach(player => {
-            if (player.getHandValue(this.cardsOnTable) > winner.getHandValue(this.cardsOnTable)) {
+    getWinner() : Player {
+        let winner: Player = this.players[0], winnerHandValue = 0;
+
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (!player.playing) continue;
+            console.log(player.username, player.getHandValueAndName(this.cardsOnTable), player.hand);
+            if (player.getHandValue(this.cardsOnTable) > winnerHandValue) {
                 winner = player;
+                winnerHandValue = player.getHandValue(this.cardsOnTable);
             }
-        });
+        }
 
         this.broadcast({
             action: "winner",
@@ -385,9 +529,9 @@ class PokerTable {
             }
         });
 
-        setTimeout(() => {
-            this.reset();
-        }, 3000);
+        // setTimeout(() => {
+        //     this.reset();
+        // }, 3000);
 
         return winner;
     }

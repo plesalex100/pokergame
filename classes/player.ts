@@ -17,6 +17,9 @@ class Player {
     seatId: number;
     socket: Websocket;
     table: PokerTable;
+    needAction: boolean = false;
+    _betNeeded: number = 0;
+    currentBet: number = 0;
 
     playing: boolean = false;
 
@@ -39,6 +42,19 @@ class Player {
         this.table = table;
     }
 
+    get betNeeded() {
+        return this._betNeeded - this.currentBet;
+    }
+
+    set betNeeded(amount: number) {
+        this._betNeeded = amount;
+
+        this.sendData({
+            action: "setBetNeeded",
+            betNeeded: this._betNeeded - this.currentBet
+        });
+    }
+
     sendData(data: any) {
         this.socket.send(JSON.stringify(data));
     }
@@ -46,6 +62,7 @@ class Player {
     bet(amount: number) : boolean {
         if (this.coins < amount) return false;
         this.coins -= amount;
+        this.currentBet += amount;
         User.updateOne({_id: this.mongoId}, {coins: this.coins});
 
         this.table.broadcast({
@@ -63,6 +80,8 @@ class Player {
 
     getHandValueAndName(cardsOnTable: Card[]) {
         const hand = this.hand.concat(cardsOnTable);
+
+        console.log(this.username, "getValueHand", hand);
         
         const flush = hand.filter(card => card.suit === hand[0].suit);
         if (flush.length >= 5) {

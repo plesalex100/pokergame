@@ -52,8 +52,6 @@ input {
     width: 16%;
     aspect-ratio: 1;
 
-    /* background-color: rgba(0, 250, 0, .5); */
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,6 +71,30 @@ input {
 
         --font-size: max(1.5vw, 20px);
         transform: scale(.7);
+    }
+
+    &.waiting > .user > img.avatar {
+        border-color: #999999;
+    }
+
+    &.playing > .user > img.avatar {
+        border-color: #fafafa;
+    }
+
+    &.turn > .user > img.avatar {
+        border-color: #1bd30a;
+    }
+
+    &.folded > .user > img.avatar {
+        border-color: #611414;
+    }
+
+    &.allin > .user > img.avatar {
+        border-color: #f1a90e;
+    }
+
+    &.winner > .user > img.avatar {
+        border-color: #1bd30a;
     }
 
     &.left-orientation {

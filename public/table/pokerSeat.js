@@ -1,6 +1,6 @@
 
 const seatContainer = document.querySelector(".seats");
-const avilableStates = ["empty", "playing", "turn", "folded", "allin", "winner"];
+const avilableStates = ["empty", "waiting", "playing", "turn", "folded", "allin", "winner"];
 
 class PokerSeat extends Player {
 
@@ -19,6 +19,20 @@ class PokerSeat extends Player {
         this.element.classList.add(newState);
         this._state = newState;
 
+        const inputButton1 = document.querySelector(".user-input div[data-input-id='1']");
+        const inputButton2 = document.querySelector(".user-input div[data-input-id='2']");
+        const inputButton3 = document.querySelector(".user-input div[data-input-id='3']");
+
+        
+        if (super.isClient) {
+            console.log(inputButton1);
+            if (inputButton1.innerText !== "Ready" && inputButton1.innerText !== "Unready") {
+                inputButton1.classList.add("disabled");
+            }
+            inputButton2.classList.add("disabled");
+            inputButton3.classList.add("disabled");
+        }
+
         switch (newState) {
             case "empty":
                 const joinBtn = document.createElement("div");
@@ -30,25 +44,25 @@ class PokerSeat extends Player {
 
                 this.element.innerHTML = "";
                 this.element.appendChild(joinBtn);
-
+                
                 if (super.username) {
                     super.leaveSeat();
                 }
                 return;
-            case "playing":
-                // css class is enough
-                return;
 
             case "turn":
                 if (super.isClient) {
-                    // show buttons
+                    inputButton1.classList.remove("disabled");
+                    inputButton2.classList.remove("disabled");
+                    inputButton3.classList.remove("disabled");
                 }
                 return;
-                
-        }
 
-        if (newState === "empty") {
-            
+            case "folded":
+                if (super.isClient) return;
+                super.resetHand();
+                return;
+                
         }
     }
 

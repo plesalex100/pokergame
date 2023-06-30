@@ -15,12 +15,17 @@ const inputButton1 = document.querySelector(".user-input div[data-input-id='1']"
 inputButton1.addEventListener("click", () => {
     if (inputButton1.classList.contains("disabled")) return;
 
-    switch (inputButton1.innerText) {
-        case "Ready":
-        case "Unready":
-            
+    switch (inputButton1.dataset.action) {
+        case "ready": // unready too
             postAction("ready");
+            break;
 
+        case "check":
+            postAction("check");
+            break;
+
+        case "call":
+            postAction("call");
             break;
     }
 });
@@ -30,6 +35,8 @@ const inputButton2 = document.querySelector(".user-input div[data-input-id='2']"
 inputButton2.addEventListener("click", async () => {
     if (inputButton2.classList.contains("disabled")) return;
 
+    const betAmount = inputButton4.value;
+    postAction("bet", { amount: parseInt(betAmount) });
 });
 
 // Fold
@@ -37,6 +44,7 @@ const inputButton3 = document.querySelector(".user-input div[data-input-id='3']"
 inputButton3.addEventListener("click", async () => {
     if (inputButton3.classList.contains("disabled")) return;
 
+    postAction("fold");
 });
 
 // Bet Amount
@@ -112,6 +120,10 @@ socket.onmessage = (e) => {
 
         case "setPlayerCoins":
             pokerSeats[data.seatId - 1].setCoins(data.coins);
+
+            if (joined && data.seatId === joined) {
+                inputButton4.attributes.max.value = data.coins;
+            }
             return;
 
         case "setPot":
@@ -146,15 +158,16 @@ socket.onmessage = (e) => {
         
         // pune carti in mana (ascunse) la fiecare jucator care nu e client
         case "dealPlayerCards":
-
-            seatsAtTable.forEach((seat, seatIndex) => {
-                if (seatIndex + 1 === joined) return;
-                console.log("seat", (seatIndex + 1), "state", seat.state, "isClient", seat.isClient);
+            for(let i = 1; i <= seatsAtTable; i++) {
+                if (i === joined) continue;
+                const seat = pokerSeats[i - 1];
+                console.log("seat", i, "state", seat.state, "isClient", seat.isClient);
                 if (seat.state !== "empty" && !seat.isClient) {
-                    console.log("setting cards for seat", (seatIndex + 1), "to", "[{number: 0}, {number: 0}]")
-                    seat.setCards([{number: 0}, {number: 0}]);
+                    console.log("setting cards for seat", i, "to", "[{number: 0}, {number: 0}]")
+                    pokerSeats[i - 1].setCards([{number: 0}, {number: 0}]);
+                    pokerSeats[i - 1].state = "playing";
                 }
-            });
+            }
 
             currentStage = 1;
             return;
@@ -162,6 +175,34 @@ socket.onmessage = (e) => {
         case "dealCards":
             if (!joined) return;
             pokerSeats[data.seatId || joined - 1].setCards(data.hand);
+            pokerSeats[data.seatId || joined - 1].state = "playing";
+            return;
+
+        case "setBetNeeded":
+            const { betNeeded } = data;
+
+            if (betNeeded === 0) {
+                inputButton1.innerText = "Check";
+                inputButton1.dataset.action = "check";
+                inputButton2.innerText = "Bet";
+
+                inputButton4.attributes.min.value = 20;
+                return;
+            }
+
+            inputButton1.innerText = "Call " + betNeeded;
+            inputButton1.dataset.action = "call";
+            inputButton2.innerText = "Raise";
+            inputButton4.attributes.min.value = betNeeded * 2;
+
+            return;
+
+        case "setPlayerTurn":
+            pokerSeats[data.seatId - 1].state = "turn";
+            return;
+
+        case "setPlayerFold":
+            pokerSeats[data.seatId - 1].state = "folded";
             return;
 
         case "setCardsOnTable":

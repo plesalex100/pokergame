@@ -161,6 +161,17 @@ router.post("/:tableId/action", userAuth, async (req: RequestWithUser, res: Resp
                 });
                 return;
 
+            case "check":
+                table.check(req.user?.username as string);
+                break;
+
+            case "call":
+                table.call(req.user?.username as string);
+                break;
+
+            case "bet":
+                table.bet(req.user?.username as string, data.amount);
+
             default: 
                 res.status(400).json({
                     success: false,
